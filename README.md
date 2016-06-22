@@ -52,7 +52,7 @@ index.sdp
 ```
 ****
 
-#你可以把它看成是 Smarty 一样使用，目前支持的语法
+###你可以把它看成是 Smarty 一样使用，目前支持的语法
 ```
 #### 循环
 {foreach from=$rows item=rs}
