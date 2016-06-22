@@ -15,8 +15,8 @@ var Sdopx=require("./sdp").Sdopx;
 Sdopx.view_paths = './views/';
 
 var sdp=new Sdopx();
-sdp.assgin('data',[{id:1,name:'test1',date:new Date()},{id:2,name:'test2',date:new Date()}]);
-sdp.assgin('title','hello sdopx');
+sdp.assign('data',[{id:1,name:'test1',date:new Date()},{id:2,name:'test2',date:new Date()}]);
+sdp.assign('title','hello sdopx');
 
 res.write(sdp.display('index'));
 res.end();
@@ -26,8 +26,8 @@ var Sdopx=require("./sdp").Sdopx;
 Sdopx.view_paths = './views/';
 
 var sdp=new Sdopx(res);
-sdp.assgin('data',[{id:1,name:'test1',date:new Date()},{id:2,name:'test2',date:new Date()}]);
-sdp.assgin('title','hello sdopx');
+sdp.assign('data',[{id:1,name:'test1',date:new Date()},{id:2,name:'test2',date:new Date()}]);
+sdp.assign('title','hello sdopx');
 sdp.display('index');
 
 ```
