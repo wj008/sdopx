@@ -117,8 +117,8 @@ sss'}
 
 {$time|date_format:'yyyy-MM-dd TT HH:mm:ss'} 日期格式化
 
-{$str|leftpad:'0'} 左填充
-{$str|rightpad:'0'} 右填充
+{$str|leftpad:6,'0'} 左填充
+{$str|rightpad:8,'0'} 右填充
 
 {$str|truncate:40,'...'} 按字符位宽数量截取字符串  中文=2个字符位宽
 
