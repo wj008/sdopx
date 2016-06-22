@@ -1,0 +1,19 @@
+{
+  "name": "sdopx",
+  "main": "sdp.js",
+  "version": "1.0.1",
+  "license": "Apache-2.0",
+  "description": "Embedded JavaScript templates",
+  "keywords": [
+    "template",
+    "engine",
+    "sdp",
+    "sdopx"
+  ],
+  
+  "author": "wj008 <26029682@qq.com>",
+  "repository": "git://github.com/wj008/sdopx.git",
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
