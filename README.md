@@ -31,6 +31,7 @@ sdp.assgin('title','hello sdopx');
 sdp.display('index');
 
 ```
+index.sdp
 ```html
 <html>
 <title>{$title}</title>
