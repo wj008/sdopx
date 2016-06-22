@@ -9,7 +9,7 @@ $ npm install sdopx
 `
 
 #Example
-`javascripg`
+```js
 //test1.js
 var Sdopx=require("./sdp").Sdopx;
 Sdopx.view_paths = './views/';
@@ -31,7 +31,7 @@ sdp.assgin('title','hello sdopx');
 sdp.display('index');
 
 ```
-`html`
+```html
 <html>
 <title>{$title}</title>
 <body>
