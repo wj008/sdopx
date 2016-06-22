@@ -53,7 +53,7 @@ index.sdp
 ****
 
 #你可以把它看成是 Smarty 一样使用，目前支持的语法
-
+```
 #### 循环
 {foreach from=$rows item=rs}
 {foreachelse}
@@ -66,8 +66,9 @@ index.sdp
 {while $str.length==3+$len }
 
 {while}
-
+```
 ### 判断
+```
 {if $rs.name() == 'wj008'}
 {elseif $rs.info==`test{$data.name}test` }
 {/if}
@@ -79,16 +80,16 @@ index.sdp
 {case value=6}
 {default}
 {/switch}
-
+```
 #### 定义 注册变量
-
+```
 {assign $test=`aaaa{$name}`} 注册到局部
 {global $test=`aaaa{$name}`} 注册到 全局  
 {assign $a++} 
 {global $a--} 
-
+```
 ### 输出和  过滤器
-
+```
 {'zzz'}
 {'aa
 sss'}
@@ -121,7 +122,7 @@ sss'}
 {$rs}
 {/for}
 输出  1 2 3 1 2 3  一般用于隔行换色
-
+```
 layout.sdp
 ```html
 <html>
@@ -140,15 +141,16 @@ child.sdp
 ```
 
 输出
+```
 <html>
 <title>hello</title>
 <body>
 这是一个继承模板测试
 </body>
 </html>
-
+```
 同时block 标签中支持 hide ,append ,prepend 表示继承插入的位置 默认是替换
-
+```
 {block name='test' append}
 {block name='test' prepend}
 {block name='test' hide} //表示如果没有子项填充 则layout 处的标签不显示
@@ -159,8 +161,9 @@ child.sdp
 {ldelim} 输出左边界符  默认左边界是 {
 
 {ldelim} 输出右边界符  默认右边界是 }
-
-保持原样输出，其实 这里是切换分界符 为  {@ @}
+```
+###保持原样输出，其实 这里是切换分界符 为  {@ @}
+```
 {literal}
 <script>
 var a={name:'xx'}
@@ -172,11 +175,12 @@ var a={name:'xx'}
 var a={name:'{@$name@}'}
 </script>
 {/literal}
-
+```
 主动切换分界符
-
+```
 {literal left='<@' right='@>'}
 <script>
 var a={name:'<@$name@>'}
 </script>
 {/literal}
+```
