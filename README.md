@@ -156,6 +156,9 @@ child.sdp
 {block name='test' hide} //表示如果没有子项填充 则layout 处的标签不显示
 
 {include file="head"} 包含文件
+{include file="head.tpl"} 包含文件
+{include file="string:kxxxcsdsd"} 包含
+{include file="dbsource:select * from table where id=1"} //系统没有实现类似资源 自己可以通过扩展注册资源 这里只是演示支持不同的资源类型加载
 {include file="head" output=fals} 包含但是不输出任何内容 比如包含一些带有函数的控件模板
 
 {ldelim} 输出左边界符  默认左边界是 {
