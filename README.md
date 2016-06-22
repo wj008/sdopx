@@ -108,7 +108,7 @@ sss'}
 
 {$str['key'].substr(2,3)} 
 
-{$code|raw}      raw 只能是最后一个修饰符 保存原样输出，如未使用 raw 过滤器则自动转成HTML实体输出
+{$code|raw}      raw 只能是最后一个修饰器 保存原样输出，如未使用 raw 修饰器则自动转成HTML实体输出
 
 {$code|upper|raw} 转大写且 原样输出
 {$code|lower}
