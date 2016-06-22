@@ -97,6 +97,17 @@ sss'}
 {\`test:'{$str}'xx\`}
 {$name}
 {new Date()}
+
+{escape($str)} 可以使用系统自带的函数 或者 注册的函数
+
+{(2*50)} 支持运算
+
+{$str.substr(2,3)} 
+
+{$str.key.substr(2,3)} 
+
+{$str['key'].substr(2,3)} 
+
 {$code|raw}      raw 只能是最后一个修饰符 保存原样输出，如未使用 raw 过滤器则自动转成HTML实体输出
 
 {$code|upper|raw} 转大写且 原样输出
