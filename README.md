@@ -65,7 +65,7 @@ index.sdp
 
 {while $str.length==3+$len }
 
-{while}
+{/while}
 ```
 ### 判断
 ```
