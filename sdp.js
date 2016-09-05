@@ -208,9 +208,9 @@ var Sdopx = (function (_super) {
         if (tplname === void 0) { tplname = null; }
         this.rethrow(err, lineno, tplname);
     };
-    Sdopx.version = '1.0.1';
+    Sdopx.version = '1.0.2';
     Sdopx.debug = false;
-    Sdopx.create_runfile = true;
+    Sdopx.create_runfile = false;
     Sdopx.view_paths = './views/';
     //注册的函数
     Sdopx.Functions = {};
