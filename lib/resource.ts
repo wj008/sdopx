@@ -2,6 +2,7 @@ import {Template} from "./template";
 import {Sdopx} from "../sdp";
 import {Source} from "./source";
 var fs = require('fs');
+var path = require('path');
 
 /**
  * Created by wj008 on 16-6-4.
@@ -64,11 +65,20 @@ export class Resource {
 }
 //注册文件读取类
 Resource.registerResource('file', {
+
     getpath: function (tplname, sdopx) {
         let filepath = null;
-        if (/[A-Z]:/i.test(tplname) || /\//.test(tplname)) {
-            if (fs.existsSync(tplname)) {
-                return tplname;
+        if (path.sep == '\\') {
+            if (/[A-Z]:/i.test(tplname)) {
+                if (fs.existsSync(tplname)) {
+                    return tplname;
+                }
+            }
+        } else {
+            if (/\//.test(tplname)) {
+                if (fs.existsSync(tplname)) {
+                    return tplname;
+                }
             }
         }
         if (tplname.substr(0, 1) == '@') {
@@ -77,12 +87,12 @@ Resource.registerResource('file', {
                 sdopx.rethrow(`common dir is not defiend!`);
             }
             tplname = tplname.substr(1);
-            let path = common_path.replace(/^[\/\\]+$/, '') + '/' + tplname;
+            let fpath = path.join(common_path, tplname);
             if (!/\.[a-z]+/i.test(tplname)) {
-                path += '.sdp';
+                fpath += '.sdp';
             }
-            if (fs.existsSync(path)) {
-                filepath = path;
+            if (fs.existsSync(fpath)) {
+                filepath = fpath;
             }
         } else {
             let tpldirs = sdopx.getTemplateDir();
@@ -90,9 +100,9 @@ Resource.registerResource('file', {
                 if (key === 'common') {
                     continue;
                 }
-                let path = tpldirs[key].replace(/[\/\\]+$/, '') + '/' + tplname + '.sdp';
-                if (fs.existsSync(path)) {
-                    filepath = path;
+                let fpath = path.join(tpldirs[key], tplname + '.sdp');
+                if (fs.existsSync(fpath)) {
+                    filepath = fpath;
                     break;
                 }
             }
