@@ -181,7 +181,7 @@ export class Template {
         }
         catch (e) {
             if (e instanceof SyntaxError) {
-                e.message += ' while compiling ejs';
+                e.message += ' while compiling sdp';
             }
             throw e;
         }
