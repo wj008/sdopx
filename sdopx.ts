@@ -4,7 +4,7 @@ import {Template} from "./lib/template";
 
 export class Sdopx extends Template {
 
-    public static version = '1.0.2';
+    public static version = '1.0.3';
     public static debug = false;
     public static create_runfile = false;
     public res = null;
@@ -204,7 +204,7 @@ export class Sdopx extends Template {
         let resource = Resource.getResource(type);
         if (!resource) {
             err.path = tplname;
-            err.message = (tplname || 'sdp') + ':'
+            err.message = (tplname || 'sdx') + ':'
                 + lineno + '\n'
                 + err.message;
             throw err;
@@ -221,7 +221,7 @@ export class Sdopx extends Template {
                 + line;
         }).join('\n');
         err.path = filepath;
-        err.message = (filepath || 'sdp') + ':'
+        err.message = (filepath || 'sdx') + ':'
             + lineno + '\n'
             + context + '\n\n'
             + err.message;
