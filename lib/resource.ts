@@ -89,7 +89,7 @@ Resource.registerResource('file', {
             tplname = tplname.substr(1);
             let fpath = path.join(common_path, tplname);
             if (!/\.[a-z]+/i.test(tplname)) {
-                fpath += '.sdp';
+                fpath += '.sdx';
             }
             if (fs.existsSync(fpath)) {
                 filepath = fpath;
@@ -100,7 +100,7 @@ Resource.registerResource('file', {
                 if (key === 'common') {
                     continue;
                 }
-                let fpath = path.join(tpldirs[key], tplname + '.sdp');
+                let fpath = path.join(tpldirs[key], tplname + '.sdx');
                 if (fs.existsSync(fpath)) {
                     filepath = fpath;
                     break;
@@ -113,7 +113,7 @@ Resource.registerResource('file', {
         let filepath = this.getpath(tplname, sdopx);
         if (filepath == null) {
             if (!/\.[a-z]+/i.test(tplname)) {
-                tplname += '.sdp';
+                tplname += '.sdx';
             }
             sdopx.rethrow(`file does not exist:'${tplname}'`);
             return {content: '', timestamp: 0, filepath: tplname};
