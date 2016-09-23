@@ -4,7 +4,7 @@ import {Template} from "./lib/template";
 
 export class Sdopx extends Template {
 
-    public static version = '1.0.3';
+    public static version = '1.0.4';
     public static debug = false;
     public static create_runfile = false;
     public res = null;
