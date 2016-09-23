@@ -22,7 +22,7 @@ res.write(sdp.display('index'));
 res.end();
 //-----------
 //test2.js
-var Sdopx=require("./sdopx").Sdopx;
+var Sdopx=require("sdopx").Sdopx;
 Sdopx.view_paths = './views/';
 
 var sdp=new Sdopx(res);
