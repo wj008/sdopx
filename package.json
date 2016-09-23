@@ -1,13 +1,13 @@
 {
   "name": "sdopx",
-  "main": "sdp.js",
+  "main": "sdopx.js",
   "version": "1.0.2",
   "license": "Apache-2.0",
   "description": "Embedded JavaScript templates",
   "keywords": [
     "template",
     "engine",
-    "sdp",
+    "sdx",
     "sdopx"
   ],
   
