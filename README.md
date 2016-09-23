@@ -7,6 +7,15 @@ Use it like php language use smarty template engine
 `
 $ npm install sdopx
 `
+如果你准备在 Express 中使用 请安装
+`
+$ npm install sdx
+`
+并设置模板引擎为 sdx
+```js
+app.set('view engine', 'sdx');
+```
+
 
 #Example
 ```js
