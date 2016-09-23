@@ -4,17 +4,51 @@ Embedded JavaScript templates
 Use it like php language use smarty template engine
 
 #Installation
-`
+```
 $ npm install sdopx
-`
+```
 如果你准备在 Express 中使用 请安装
-`
+```
 $ npm install sdx
-`
+```
 并设置模板引擎为 sdx
 ```js
 app.set('view engine', 'sdx');
 ```
+####默认views 模板
+error.sdx
+```html
+<h1>{$message}}</h1>
+<h2>{$error.status}</h2>
+<pre>{$error.stack}</pre>
+```
+
+layout.sdx
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{$title}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+   {block name=body}hello{/block}
+  </body>
+</html>
+
+```
+
+index.sdx
+```html
+{extends file='layout'}
+{block name=body}
+<h1>{$title}</h1>
+<p>Welcome to {$title}</p>
+{/block}
+```
+
+使用webstorm 右键设置关联类型为html
+
 
 
 #Example
