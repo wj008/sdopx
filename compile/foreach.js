@@ -1,3 +1,4 @@
+"use strict";
 var Compile_Foreach = (function () {
     function Compile_Foreach() {
     }
@@ -72,6 +73,6 @@ var Compile_Foreach = (function () {
         return output.join('\n');
     };
     return Compile_Foreach;
-})();
+}());
 module.exports = Compile_Foreach;
 //# sourceMappingURL=foreach.js.map

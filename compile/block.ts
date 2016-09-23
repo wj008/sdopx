@@ -24,7 +24,7 @@ class Compile_Block {
             return '';
         } else {
             if (!(append || prepend)) {
-                compile.moveBlockToEnd(name, offset);
+                compile.moveBlockToOver(name, offset);
             }
             if (append) {
                 compile.openTag('block', [null, code]);

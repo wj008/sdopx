@@ -1,3 +1,4 @@
+"use strict";
 var Compile_Assign = (function () {
     function Compile_Assign() {
     }
@@ -82,6 +83,6 @@ var Compile_Assign = (function () {
         }
     };
     return Compile_Assign;
-})();
+}());
 module.exports = Compile_Assign;
 //# sourceMappingURL=assign.js.map

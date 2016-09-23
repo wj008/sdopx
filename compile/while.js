@@ -1,3 +1,4 @@
+"use strict";
 var Compile_While = (function () {
     function Compile_While() {
     }
@@ -10,6 +11,6 @@ var Compile_While = (function () {
         return "}";
     };
     return Compile_While;
-})();
+}());
 module.exports = Compile_While;
 //# sourceMappingURL=while.js.map

@@ -1,3 +1,4 @@
+"use strict";
 var Compile_Include = (function () {
     function Compile_Include() {
     }
@@ -31,6 +32,6 @@ var Compile_Include = (function () {
         return output.join('');
     };
     return Compile_Include;
-})();
+}());
 module.exports = Compile_Include;
 //# sourceMappingURL=include.js.map

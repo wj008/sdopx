@@ -1,3 +1,4 @@
+"use strict";
 //很可能不被加入
 var Compile_Switch = (function () {
     function Compile_Switch() {
@@ -71,6 +72,6 @@ var Compile_Switch = (function () {
         return output.join('\n');
     };
     return Compile_Switch;
-})();
+}());
 module.exports = Compile_Switch;
 //# sourceMappingURL=switch.js.map

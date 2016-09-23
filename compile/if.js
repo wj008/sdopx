@@ -1,3 +1,4 @@
+"use strict";
 var Compile_If = (function () {
     function Compile_If() {
     }
@@ -20,6 +21,6 @@ var Compile_If = (function () {
         return "}";
     };
     return Compile_If;
-})();
+}());
 module.exports = Compile_If;
 //# sourceMappingURL=if.js.map

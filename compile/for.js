@@ -1,3 +1,4 @@
+"use strict";
 var Compile_For = (function () {
     function Compile_For() {
     }
@@ -75,6 +76,6 @@ var Compile_For = (function () {
         return output.join('\n');
     };
     return Compile_For;
-})();
+}());
 module.exports = Compile_For;
 //# sourceMappingURL=for.js.map

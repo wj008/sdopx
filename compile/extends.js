@@ -1,3 +1,4 @@
+"use strict";
 var Compile_Extends = (function () {
     function Compile_Extends() {
     }
@@ -28,6 +29,6 @@ var Compile_Extends = (function () {
         return tpl.compileTemplateSource();
     };
     return Compile_Extends;
-})();
+}());
 module.exports = Compile_Extends;
 //# sourceMappingURL=extends.js.map

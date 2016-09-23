@@ -1,3 +1,4 @@
+"use strict";
 //自定义的标签
 var Compile_Customize = (function () {
     function Compile_Customize() {
@@ -43,6 +44,6 @@ var Compile_Customize = (function () {
         return "},$_sdopx);";
     };
     return Compile_Customize;
-})();
+}());
 module.exports = Compile_Customize;
 //# sourceMappingURL=customize.js.map

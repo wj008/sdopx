@@ -1,3 +1,4 @@
+"use strict";
 var Compile_Delim = (function () {
     function Compile_Delim() {
     }
@@ -43,6 +44,6 @@ var Compile_Delim = (function () {
         return '';
     };
     return Compile_Delim;
-})();
+}());
 module.exports = Compile_Delim;
 //# sourceMappingURL=delim.js.map

@@ -1,3 +1,4 @@
+"use strict";
 var Compile_Block = (function () {
     function Compile_Block() {
     }
@@ -25,7 +26,7 @@ var Compile_Block = (function () {
         }
         else {
             if (!(append || prepend)) {
-                compile.moveBlockToEnd(name, offset);
+                compile.moveBlockToOver(name, offset);
             }
             if (append) {
                 compile.openTag('block', [null, code]);
@@ -41,6 +42,6 @@ var Compile_Block = (function () {
         return code;
     };
     return Compile_Block;
-})();
+}());
 module.exports = Compile_Block;
 //# sourceMappingURL=block.js.map
