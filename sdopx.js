@@ -182,7 +182,7 @@ var Sdopx = (function (_super) {
         var resource = resource_1.Resource.getResource(type);
         if (!resource) {
             err.path = tplname;
-            err.message = (tplname || 'sdx') + ':'
+            err.message = (tplname || Sdopx.extension) + ':'
                 + lineno + '\n'
                 + err.message;
             throw err;
@@ -197,7 +197,7 @@ var Sdopx = (function (_super) {
                 + line;
         }).join('\n');
         err.path = filepath;
-        err.message = (filepath || 'sdx') + ':'
+        err.message = (filepath || Sdopx.extension) + ':'
             + lineno + '\n'
             + context + '\n\n'
             + err.message;
@@ -208,8 +208,9 @@ var Sdopx = (function (_super) {
         if (tplname === void 0) { tplname = null; }
         this.rethrow(err, lineno, tplname);
     };
-    Sdopx.version = '1.0.5';
+    Sdopx.version = '1.0.6';
     Sdopx.debug = false;
+    Sdopx.extension = 'opx';
     Sdopx.create_runfile = false;
     Sdopx.view_paths = './views/';
     //注册的函数
