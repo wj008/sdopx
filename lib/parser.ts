@@ -612,9 +612,7 @@ export class Parser {
                 temp.args[name] = 'true';
                 continue;
             }
-
         }
-
     }
 
     public pars_block_close(item) {

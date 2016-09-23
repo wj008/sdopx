@@ -378,6 +378,7 @@ export class Compile {
         if (code === null) {
             this.getParentBlock(name);
         }
+        //如果父类有节点
         let block = this.parser.getBrock(name);
         if (block) {
             let args = block[0];
@@ -391,9 +392,11 @@ export class Compile {
             let offset = this.source.cursor;
             let bound = this.source.bound;
             let closed = this.closed;
+            //将光标移到开始处
             this.source.cursor = args.start;
             this.source.bound = args.over;
             this.closed = false;
+            //将光标移到开始处
             let output = this.compileTemplate();
             this.closed = closed;
             this.source.cursor = offset;

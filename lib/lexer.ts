@@ -430,7 +430,6 @@ export class Lexer {
             if (ret.val == 'block') {
                 item.begin = ret.start;
             }
-
             if (ret.val === '/block') {
                 item.over = ret.start;
                 item.end = ret.end;
