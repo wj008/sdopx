@@ -181,11 +181,10 @@ export class Template {
         }
         catch (e) {
             if (e instanceof SyntaxError) {
-                e.message += ' while compiling sdp';
+                e.message += ' while compiling '+Sdopx.extension;
             }
             throw e;
         }
-        return null;
     }
 
     //编译资源
