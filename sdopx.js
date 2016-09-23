@@ -208,7 +208,7 @@ var Sdopx = (function (_super) {
         if (tplname === void 0) { tplname = null; }
         this.rethrow(err, lineno, tplname);
     };
-    Sdopx.version = '1.0.4';
+    Sdopx.version = '1.0.5';
     Sdopx.debug = false;
     Sdopx.create_runfile = false;
     Sdopx.view_paths = './views/';
