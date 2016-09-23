@@ -11,7 +11,7 @@ $ npm install sdopx
 #Example
 ```js
 //test1.js
-var Sdopx=require("./sdp").Sdopx;
+var Sdopx=require("sdopx").Sdopx;
 Sdopx.view_paths = './views/';
 
 var sdp=new Sdopx();
@@ -22,7 +22,7 @@ res.write(sdp.display('index'));
 res.end();
 //-----------
 //test2.js
-var Sdopx=require("./sdp").Sdopx;
+var Sdopx=require("./sdopx").Sdopx;
 Sdopx.view_paths = './views/';
 
 var sdp=new Sdopx(res);
@@ -31,7 +31,7 @@ sdp.assign('title','hello sdopx');
 sdp.display('index');
 
 ```
-index.sdp
+index.sdx
 ```html
 <html>
 <title>{$title}</title>
@@ -134,7 +134,7 @@ sss'}
 {/for}
 输出  1 2 3 1 2 3  一般用于隔行换色
 ```
-layout.sdp
+layout.sdx
 ```html
 <html>
 <title>{block name=title}{/block}</title>
@@ -144,7 +144,7 @@ layout.sdp
 </html>
 ```
 
-child.sdp
+child.sdx
 ```html
 {extends file='layout'}
 {block name=title}hello{/block}
@@ -169,7 +169,7 @@ child.sdp
 
 
 {include file="head"} 包含文件
-{include file="head.tpl"} 包含文件
+{include file="head.tpl"} 包含其他后缀文件
 {include file="string:kxxxcsdsd"} 包含
 {include file="dbsource:select * from table where id=1"} //系统没有实现类似资源 自己可以通过扩展注册资源 这里只是演示支持不同的资源类型加载
 {include file="head" output=fals} 包含但是不输出任何内容 比如包含一些带有函数的控件模板
