@@ -1,7 +1,7 @@
 import {Source} from "./source";
 import {Parser} from "./parser";
 import {Lexer} from "./lexer";
-import {Sdopx} from "../sdp";
+import {Sdopx} from "../sdopx";
 import {Template} from "./template";
 import * as CompilePlugins from "../compile";
 

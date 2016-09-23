@@ -4,7 +4,7 @@
 import {Compile} from "./compile";
 import {Lexer} from "./lexer";
 import { TreeMap }  from './tree_map';
-import {Sdopx} from "../sdp";
+import {Sdopx} from "../sdopx";
 import {Source} from "./source";
 
 export class Parser {

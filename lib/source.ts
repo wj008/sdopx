@@ -1,5 +1,5 @@
 import {Compile} from "./compile";
-import {Sdopx} from "../sdp";
+import {Sdopx} from "../sdopx";
 const fs = require('fs');
 const utils = require('./utils');
 

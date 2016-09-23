@@ -1,4 +1,4 @@
-import {Sdopx} from "../sdp";
+import {Sdopx} from "../sdopx";
 import {Resource} from "./resource";
 import {Source} from "./source";
 import {Lexer} from "./lexer";

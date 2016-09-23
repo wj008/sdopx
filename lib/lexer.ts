@@ -5,7 +5,7 @@
 import { SyntaxRules } from './syntaxrules';
 import { Source }  from './source';
 import { TreeMap }  from './tree_map';
-import {Sdopx} from "../sdp";
+import {Sdopx} from "../sdopx";
 
 /**
  * 词法分词器
