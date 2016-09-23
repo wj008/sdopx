@@ -9,21 +9,21 @@ $ npm install sdopx
 ```
 如果你准备在 Express.js 中使用 请安装
 ```
-$ npm install sdx
+$ npm install opx
 ```
-并设置模板引擎为 sdx
+并设置模板引擎为 opx
 ```js
-app.set('view engine', 'sdx');
+app.set('view engine', 'opx');
 ```
 ####默认views 模板
-error.sdx
+error.opx
 ```html
 <h1>{$message}}</h1>
 <h2>{$error.status}</h2>
 <pre>{$error.stack}</pre>
 ```
 
-layout.sdx
+layout.opx
 ```html
 <!DOCTYPE html>
 <html>
@@ -38,7 +38,7 @@ layout.sdx
 
 ```
 
-index.sdx
+index.opx
 ```html
 {extends file='layout'}
 {block name=body}
@@ -74,7 +74,7 @@ sdp.assign('title','hello sdopx');
 sdp.display('index');
 
 ```
-index.sdx
+index.opx
 ```html
 <html>
 <title>{$title}</title>
@@ -177,7 +177,7 @@ sss'}
 {/for}
 输出  1 2 3 1 2 3  一般用于隔行换色
 ```
-layout.sdx
+layout.opx
 ```html
 <html>
 <title>{block name=title}{/block}</title>
@@ -187,7 +187,7 @@ layout.sdx
 </html>
 ```
 
-child.sdx
+child.opx
 ```html
 {extends file='layout'}
 {block name=title}hello{/block}
