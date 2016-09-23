@@ -177,7 +177,6 @@ var Sdopx = (function (_super) {
         }
         if (lineno == null || tplname == null) {
             throw err;
-            return;
         }
         var _a = resource_1.Resource.parseResourceName(tplname), type = _a.type, name = _a.name;
         var resource = resource_1.Resource.getResource(type);

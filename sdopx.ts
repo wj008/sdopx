@@ -198,7 +198,6 @@ export class Sdopx extends Template {
         }
         if (lineno == null || tplname == null) {
             throw err;
-            return;
         }
         let {type,name}=Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
