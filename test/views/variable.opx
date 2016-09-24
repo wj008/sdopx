@@ -1,0 +1,107 @@
+1:{$foo1}        <-- 显示简单的变量 (非数组/对象)
+2:{$foo2[4]}     <-- 在0开始索引的数组中显示第五个元素
+3:{$foo3.bar}    <-- 显示"bar"对象属性，等同于JS的 foo.bar
+4:{$foo4[$bar]}  <-- 显示以变量$bar值作为下标指向的对象属性,$bar 为abc 等同于JS的 foo['abc']
+5:{#webname#}    <-- 显示简单的配置变量 (非数组/对象)
+6:{#cfgobj.key1#} <-- 显示配置对象的属性值 配置项 只能是 xxx.key.key 不可使用下标 如 cfgobj[key1] 是不合法的配置项
+7:{#cfgobj.key1|raw#} <--配置项仅支持原样输出的过滤器 其他过滤器不支持
+8:{$sdopx.config.webname} <-- 等同于{#webname#} $sdopx变量是内部保留变量
+9:{$sdopx.config.cfgobj.key1} <-- 等同于{#cfgobj.key1#}
+
+10.在页面中注册变量并显示变量（临时变量）
+
+{function fn=abc name='zhangsan'}
+{$name}<-- 局部变量
+{assign $name='baa'}<-- 改写局部变量
+{$name}<-- 局部变量
+{assign $data={key:'kkk'}}<-- 注册一个对象
+{assign $data.box='baa'}
+{$data.key}<-- 局部变量
+{$data.box}<-- 局部变量
+{global $gname='this is global variable!'}<-- 注册一个全局变量
+{$gname}<-- 全局变量会显示
+{/function}
+
+{call fn=abc}<-- 调用函数abc
+
+{$name}<-- 局部变量不会显示
+{$gname}<-- 全局变量会显示
+
+11.在页面中注册变量并显示变量（全局变量）
+
+12 多种变量输出方式
+
+{'test out'}
+
+{'zzz'}
+
+换行输出
+{'aa
+sss'}
+
+双引号
+{"xxx"}
+拼接字符串
+{`test:'{$foo1}'xx`}
+
+调用变量方法
+{$fun.hello('wj008')}
+{$fun2.test('wj008')[0]}
+系统对象
+{new Date()}
+{new Date()|date_format:'yyyy-MM-dd'}
+
+系统函数
+{escape($foo1)}
+{$foo1.toUpperCase()}
+{$foo3.bar.substr(2,3)}
+
+数学运算和嵌入标签
+
+{2*50} 支持运算
+{assign $x=500}
+{assign $y=2*$x-200}
+{$y-10}
+
+{assign $foo=`this is message {$fun.hello('wj008')}`}
+{$foo}
+
+定义数组：
+{assign $foo=['aa',['bb']]} //可嵌套
+{JSON.stringify($foo)|raw}
+
+{assign $foo.push(111)} //添加到数组
+{JSON.stringify($foo)|raw}
+{$foo.length} //获取长度
+
+
+定义对象：
+{assign $foo={a:[2],b:{},c:'w'}} //可嵌套
+{JSON.stringify($foo)|raw}
+
+{assign $json=JSON.stringify($foo)}
+{$json|raw}
+
+{assign $foo=[1,2]}
+{$foo[1]}             // 一般的
+
+{assign $foo={bar:'test'}}
+{$foo['bar']}
+{assign $foo={bar:[1,2,3]}}
+{$foo['bar'][1]}
+
+{assign $foo=[1,2,3,4]}
+{assign $x=1}
+{$foo[$x+$x]}         // 下标可以是各种表达式
+
+{assign $bar=[1,3]}
+{$foo[$bar[1]]}       // 嵌套下标
+{1==1 ? $foo1 : 'not 1'}
+
+对象链：
+{$obj.add().add().add().add().add().add().val()}
+
+{func var=`test {$foo1} test`}
+{func var=`test {new Date()} test`}
+{func var=`variable foo is {(1==1 ? $foo1 : 'not 1')} test`}
+{func var=`variable foo is {(5+10)} test`}

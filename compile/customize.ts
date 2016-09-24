@@ -36,6 +36,17 @@ class Compile_Customize {
             compile.openTag(name, [prefix, assign]);
             return `__Sdopx.Plugins[${JSON.stringify(name)}](${params},{echo:__echo,raw:__raw},function(${prefix}_${assign}){`;
         }
+
+        if (/^\w+$/.test(name)) {
+            let temp = [];
+            for (var key in args) {
+                let val = (args[key] == '' || args[key] == null) ? 'null' : args[key];
+                temp.push(`'${key}':${val}`);
+            }
+            let params = `{${temp.join(',')}}`;
+            return `if(typeof sdopx_${name} =='function'){ sdopx_${name}(${params},{echo:__echo,raw:__raw},$_sdopx);}`;
+        }
+
         compile.addError(`The customize '${name}' tag is not support.`);
     }
 

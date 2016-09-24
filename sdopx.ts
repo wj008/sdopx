@@ -4,10 +4,12 @@ import {Template} from "./lib/template";
 
 export class Sdopx extends Template {
 
-    public static version = '1.0.8';
+    public static version = '1.0.9';
     public static debug = false;
     public static extension = 'opx';
     public static create_runfile = false;
+    public static left_delimiter = '{';
+    public static rigth_delimiter = '}';
     public res = null;
 
     public _book = {};
@@ -38,8 +40,15 @@ export class Sdopx extends Template {
     private template_dirs = {};
     private template_index = 0;
 
+    public left_delimiter;
+    public rigth_delimiter;
+
     public constructor(res = null) {
         super();
+        this.left_delimiter = Sdopx.left_delimiter || '{';
+        this.rigth_delimiter = Sdopx.rigth_delimiter || '}';
+        let _sdopx = this._book['sdopx'] = {};
+        _sdopx['config'] = this._config;
         this.res = res;
         this.setTemplateDir(Sdopx.view_paths);
     }
@@ -57,6 +66,22 @@ export class Sdopx extends Template {
             }
         } catch (e) {
             this.rethrow('assign error!');
+        }
+    }
+
+    public assignConfig(key, value = null) {
+        if (typeof key == 'string') {
+            this._config[key] = value;
+            return;
+        }
+        try {
+            for (let i in key) {
+                if (typeof i == 'string') {
+                    this.assignConfig(i, key[i]);
+                }
+            }
+        } catch (e) {
+            this.rethrow('assignConfig error!');
         }
     }
 
@@ -200,7 +225,7 @@ export class Sdopx extends Template {
         if (lineno == null || tplname == null) {
             throw err;
         }
-        let {type,name}=Resource.parseResourceName(tplname);
+        let {type, name}=Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
         if (!resource) {
             err.path = tplname;
@@ -209,7 +234,7 @@ export class Sdopx extends Template {
                 + err.message;
             throw err;
         }
-        let {content='',timestamp=0,filepath=tplname} =resource.fetch(name, this.sdopx);
+        let {content='', timestamp=0, filepath=tplname} =resource.fetch(name, this.sdopx);
         var lines = content.split('\n')
             , start = Math.max(lineno - 3, 0)
             , end = Math.min(lines.length, lineno + 3);

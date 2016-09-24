@@ -410,7 +410,7 @@ class Rules {
 
     //打开内置函数
     public static Open_Function = {
-        rule: /\w+\(|new\s+\w+\(/,
+        rule: /\w+(?:\.\w+)*\(|new\s+\w+(?:\.\w+)*\(/,
         token: 'func',
         next: {
             Expression: Rules.Expression(),

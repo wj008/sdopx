@@ -3,7 +3,7 @@
  */
 import {Compile} from "./compile";
 import {Lexer} from "./lexer";
-import { TreeMap }  from './tree_map';
+import {TreeMap}  from './tree_map';
 import {Sdopx} from "../sdopx";
 import {Source} from "./source";
 
@@ -135,7 +135,15 @@ export class Parser {
             temp.raw = true;
             code = mt[1].replace(/(^\s+|\s+$)/g, '');
         }
-        temp.code = '$_sdopx._config[\'' + code + '\']';
+        var keys = code.split('.');
+        if (keys.length > 1) {
+            temp.code = '$_sdopx._config[\'' + keys[0] + '\']';
+            keys.shift();
+            let lcode = keys.join('.');
+            temp.code += '.' + lcode;
+        } else {
+            temp.code = '$_sdopx._config[\'' + code + '\']';
+        }
         if (Sdopx.debug) {
             temp['info'] = tree.getInfo();
         }
@@ -316,8 +324,8 @@ export class Parser {
     }
 
     public pars_string(item) {
-        let text=item.value.replace(/(^\s+|\s+$)/g, '');
-        text= text.replace(/\n/g,'\\n').replace(/\r/g,'\\r');
+        let text = item.value.replace(/(^\s+|\s+$)/g, '');
+        text = text.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         return {
             map: Parser.CODE_EXPRESS,
             code: text,
@@ -386,7 +394,7 @@ export class Parser {
             code: '',
             node: item.node
         };
-        temp.code = item.value.replace(/\'/g, '\\\'').replace(/\n/g,'\\n').replace(/\r/g,'\\r');
+        temp.code = item.value.replace(/\'/g, '\\\'').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
         let nitem = this.lexData.next();
         if (!nitem) {
             return null;

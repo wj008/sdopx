@@ -3,7 +3,6 @@ class Compile_Assign {
 
     //注册变量
     public static assign(name, args, compile:Compile) {
-
         let key = args.var || null;
         let {value=null, code=null } = args;
         if (code == null) {

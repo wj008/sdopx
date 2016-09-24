@@ -170,6 +170,8 @@ exports.register = function (Sdopx) {
     Sdopx.registerFunction('hello', function (str) {
         return 'hello ' + str;
     });
+
+
     //## 插件使用
     Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
         let cycle_vars = sdopx._temp_cycle_vars = sdopx._temp_cycle_vars || {};

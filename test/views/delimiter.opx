@@ -1,0 +1,10 @@
+切换默认定界符号 {@$foo1@}
+
+Welcome {@$name@} to Sdopx
+<script language="javascript">
+    var foo = '{@$foo@}';
+    function dosomething() {
+        alert("foo is " + foo);
+    }
+    dosomething();
+</script>

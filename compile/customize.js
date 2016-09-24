@@ -37,6 +37,15 @@ var Compile_Customize = (function () {
             compile.openTag(name, [prefix, assign]);
             return "__Sdopx.Plugins[" + JSON.stringify(name) + "](" + params + ",{echo:__echo,raw:__raw},function(" + prefix + "_" + assign + "){";
         }
+        if (/^\w+$/.test(name)) {
+            var temp = [];
+            for (var key in args) {
+                var val = (args[key] == '' || args[key] == null) ? 'null' : args[key];
+                temp.push("'" + key + "':" + val);
+            }
+            var params = "{" + temp.join(',') + "}";
+            return "if(typeof sdopx_" + name + " =='function'){ sdopx_" + name + "(" + params + ",{echo:__echo,raw:__raw},$_sdopx);}";
+        }
         compile.addError("The customize '" + name + "' tag is not support.");
     };
     Compile_Customize.__customize_close = function (tagname, compile) {

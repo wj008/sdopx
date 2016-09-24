@@ -25,6 +25,10 @@ var Sdopx = (function (_super) {
         //模板目录
         this.template_dirs = {};
         this.template_index = 0;
+        this.left_delimiter = Sdopx.left_delimiter || '{';
+        this.rigth_delimiter = Sdopx.rigth_delimiter || '}';
+        var _sdopx = this._book['sdopx'] = {};
+        _sdopx['config'] = this._config;
         this.res = res;
         this.setTemplateDir(Sdopx.view_paths);
     }
@@ -43,6 +47,23 @@ var Sdopx = (function (_super) {
         }
         catch (e) {
             this.rethrow('assign error!');
+        }
+    };
+    Sdopx.prototype.assignConfig = function (key, value) {
+        if (value === void 0) { value = null; }
+        if (typeof key == 'string') {
+            this._config[key] = value;
+            return;
+        }
+        try {
+            for (var i in key) {
+                if (typeof i == 'string') {
+                    this.assignConfig(i, key[i]);
+                }
+            }
+        }
+        catch (e) {
+            this.rethrow('assignConfig error!');
         }
     };
     Sdopx.prototype.display = function (tplname) {
@@ -208,10 +229,12 @@ var Sdopx = (function (_super) {
         if (tplname === void 0) { tplname = null; }
         this.rethrow(err, lineno, tplname);
     };
-    Sdopx.version = '1.0.8';
+    Sdopx.version = '1.0.9';
     Sdopx.debug = false;
     Sdopx.extension = 'opx';
     Sdopx.create_runfile = false;
+    Sdopx.left_delimiter = '{';
+    Sdopx.rigth_delimiter = '}';
     Sdopx.view_paths = './views/';
     //注册的函数
     Sdopx.Functions = {};
