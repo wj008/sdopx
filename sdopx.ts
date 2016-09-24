@@ -49,6 +49,8 @@ export class Sdopx extends Template {
         this.rigth_delimiter = Sdopx.rigth_delimiter || '}';
         let _sdopx = this._book['sdopx'] = {};
         _sdopx['config'] = this._config;
+        _sdopx['ldelim'] = this.left_delimiter;
+        _sdopx['rdelim'] = this.rigth_delimiter;
         this.res = res;
         this.setTemplateDir(Sdopx.view_paths);
     }
