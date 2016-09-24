@@ -208,7 +208,7 @@ var Sdopx = (function (_super) {
         if (tplname === void 0) { tplname = null; }
         this.rethrow(err, lineno, tplname);
     };
-    Sdopx.version = '1.0.6';
+    Sdopx.version = '1.0.8';
     Sdopx.debug = false;
     Sdopx.extension = 'opx';
     Sdopx.create_runfile = false;
