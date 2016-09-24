@@ -1,4 +1,4 @@
-//1测试变量
+//1测试变量 可使用命令行直接运行
 
 var path = require('path');
 var Sdopx = require("../../sdopx").Sdopx;

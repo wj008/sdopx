@@ -1,3 +1,4 @@
+//测试分界符号指定 可使用命令行直接运行
 var path = require('path');
 var Sdopx = require("../../sdopx").Sdopx;
 //Sdopx.create_runfile=true; //输出编译后的文件
