@@ -1,0 +1,22 @@
+Hello {$firstname} {$lastname}, glad to see you can make it.
+<br/>
+{* this will not work as $variables are case sensitive *}
+This weeks meeting is in {$meetingPlace}
+.
+{* this will work *}
+This weeks meeting is in {$meetingPlace}.
+
+数组----------
+{$Contacts[0]}<br/>
+{$Contacts[1]}<br/>
+{* you can print arrays of arrays as well *}
+{$Contacts[2][0]}<br/>
+{$Contacts[2][1]}<br/>
+{$Contacts[2].length}<br/>
+
+对象----
+{$data.fax}<br/>
+{$data.email}<br/>
+{* you can print arrays of arrays as well *}
+{$data.phone.home}<br/>
+{$data.phone.cell}<br/>
