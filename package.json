@@ -1,13 +1,15 @@
 {
   "name": "sdopx",
   "main": "sdopx.js",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "license": "Apache-2.0",
   "description": "Embedded JavaScript templates",
   "keywords": [
+    "nodejs smarty",
+    "smarty",
     "template",
     "engine",
-    "sdx",
+    "opx",
     "sdopx"
   ],
   
