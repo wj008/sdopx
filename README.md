@@ -3,6 +3,14 @@ Embedded JavaScript templates
 
 Use it like php language use smarty template engine
 
+Sdopx 是一个nodejs 的模板引擎，他是PHP 的 Smarty 的 nodejs 实现，但是其实现方式及语法根据JS本身的特性有所改变，并融入新的语法特性及新的好用功能属性， Sdopx 可以支持类似Smarty的方式使用 也可以支持 Express.js 方式使用， Sdopx 几乎支持Smarty 的各种使用习惯，以及扩展相应的属性， 包括 插件注册 函数注册 修饰器注册 数据来源注册 前置后缀过滤器的使用，由于NodeJs的运行机制和PHP本身有所不同，Sdopx 将编译后的代码以创建匿名函数方式直接缓存在内存中， 使得Sdopx在运行效率上大大提高（至少20倍以上），编译后的代码和ejs模板引擎的代码基本类似，所以运行效率和ejs模板引擎相当，甚至有超越ejs模板引擎的时候，
+
+Sdopx的编译是使用本人独创的链条式分支选择模式进行匹配语法结构的，并没有使用任何相应的完全正则或者是复杂的re2c模拟结构，在保证模板实现真正的解析而非单纯替换前提下又大大的改善编译效率 （Sdopx 是一个语言层面的模板引擎，而非简单替换），你可以根据自己需要，定制编译语法，定制插件以及自己的使用方式。
+
+Sdopx 还对PHP的Smarty 插件的开发进行了相应的简化，让插件开发变得随手拈来，Sdopx 还允许开发 头尾标签对的插件，（这是Smarty 无法支持的）。
+
+Sdopx 是支持模板继承的nodejs模板引擎的，Sdopx 暂时不支持前端JS使用 (后续可能会精简一个前端使用的模板引擎，一个编译缓存型的模板引擎真的合适在前端使用吗？）
+
 #Installation
 ```
 $ npm install sdopx
