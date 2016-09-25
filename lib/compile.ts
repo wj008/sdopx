@@ -62,6 +62,7 @@ export class Compile {
     public compileTemplate() {
         let output = [];
         let i = 0;
+        let tagend = false;//标记结束
         let loop = function () {
             if (this.closed || i >= 100000) {
                 return false;
@@ -73,10 +74,14 @@ export class Compile {
                 return false;
             }
             if (html_item.code != '') {
+                //如果是标签结束的需要清除内容第一个换行
+                if (tagend) {
+                    html_item.code = html_item.code.replace(/^(\r\n|\n|r)/g, '');
+                }
                 let code = '__raw(' + JSON.stringify(html_item.code) + ');';
                 output.push(code);
             }
-
+            tagend = false;
             if (html_item.next == 'Finish') {
                 return false;
             }
@@ -98,6 +103,7 @@ export class Compile {
                         }
                         break;
                     case Parser.CODE_ASSIGN:
+                        tagend = true;
                         output.push(tpl_item.code + ';');
                         break;
                     case Parser.CODE_TAG:
@@ -106,6 +112,7 @@ export class Compile {
                         let compfunc = Compile.Plugins[name] || null;
                         let code = null;
                         if (compfunc) {
+                            tagend = true;
                             code = compfunc(name, tpl_item.args, this);
                             output.push(code);
                         } else {
@@ -121,6 +128,7 @@ export class Compile {
                         let compfunc = Compile.Plugins[name + '_close'] || null;
                         let code = null;
                         if (compfunc) {
+                            tagend = true;
                             code = compfunc(name, this);
                             output.push(code);
                         } else {
@@ -153,6 +161,7 @@ export class Compile {
             }
             //处理注释
             if (html_item.next == 'Init_Comment') {
+                tagend = true;
                 let cmitem = this.parser.parsComment();
                 if (cmitem == null) {
                     return false;
@@ -161,6 +170,7 @@ export class Compile {
             }
 
             if (html_item.next == 'Close_Literal') {
+                tagend = true;
                 let lit_item = this.parser.parsLiteral();
                 if (!lit_item) {
                     return false;
