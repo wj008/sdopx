@@ -1,0 +1,17 @@
+{extends file='3layout'}
+{block name=body}
+<h1>{$title}</h1>
+<p>Welcome to {$meetingPlace}</p>
+
+
+{for start=1 to=1}
+{assign $name='baa'}<-- 改写局部变量
+{global $gname='this is global variable!'}<-- 注册一个全局变量
+{$gname}<-- 全局变量会显示
+{/for}
+
+{$name}<-- 局部变量不会显示
+{$gname}<-- 全局变量会显示
+
+{/block}
+
