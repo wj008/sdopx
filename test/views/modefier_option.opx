@@ -8,3 +8,7 @@
 {$bar|option:$option,'ddd'}<br/>
 {$name|option:$option}<br/>
 {'abc'|option:'sss'}<br/>
+{$bool|option:'yes','no'}<br/>
+{!$bool|option:'yes','no'}<br/>
+
+{!$bool|option:['no','yes'],'null'}<br/>
