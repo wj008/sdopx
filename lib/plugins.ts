@@ -165,6 +165,36 @@ exports.register = function (Sdopx) {
         return String(str).replace(/\n/g, '<br/>');
     });
 
+    Sdopx.registerModifier('option', function (str, opts, def = '') {
+        if (!(typeof str == 'string' || typeof str == 'number' || typeof str == 'boolean')) {
+            return def;
+        }
+        if (str === void 0 || str === NaN) {
+            return def;
+        }
+        if (typeof str == 'boolean') {
+            if (typeof opts != 'object') {
+                if (str) {
+                    return opts;
+                }
+                return def;
+            }
+            str = str === true ? 1 : 0;
+        }
+        if (typeof opts != 'object') {
+            return def;
+        }
+        try {
+            if (opts[str] === void 0) {
+                return def;
+            }
+            return opts[str];
+        }
+        catch (e) {
+            return def;
+        }
+    });
+
     //########################################################################################
     //## 函数使用
     Sdopx.registerFunction('hello', function (str) {
@@ -175,7 +205,7 @@ exports.register = function (Sdopx) {
     //## 插件使用
     Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
         let cycle_vars = sdopx._temp_cycle_vars = sdopx._temp_cycle_vars || {};
-        let {name='default',print=true,advance=true,reset=false,values=null,delimiter=',',assign=null}=params;
+        let {name='default', print=true, advance=true, reset=false, values=null, delimiter=',', assign=null}=params;
         let item = cycle_vars[name] || null;
         if (values === null && item === null) {
             sdopx.addError(`cycle: missing 'values' parameter`);
