@@ -1,0 +1,10 @@
+对象----
+{$option.bar}<br/>
+{$option.name}<br/>
+{* you can print arrays of arrays as well *}
+{$name}<br/>
+{$bar}<br/>
+
+{$bar|option:$option,'ddd'}<br/>
+{$name|option:$option}<br/>
+{'abc'|option:'sss'}<br/>
