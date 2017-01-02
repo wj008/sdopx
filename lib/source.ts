@@ -1,7 +1,7 @@
 import {Compile} from "./compile";
 import {Sdopx} from "../sdopx";
-const fs = require('fs');
-const utils = require('./utils');
+import fs = require('fs');
+import utils = require('./utils');
 
 export class Source {
 

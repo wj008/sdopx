@@ -4,12 +4,8 @@ if (files) {
     files.forEach(function (path) {
         var m = path.match(/(\w+)\.js$/i);
         if (m && m[1] != 'index') {
-            var name_1 = m[1];
-            var pulgin = require('./' + name_1);
-            for (var key in pulgin) {
-                module.exports[key] = pulgin[key];
-            }
+            let name = m[1];
+            require('./' + name);
         }
     });
 }
-//# sourceMappingURL=index.js.map

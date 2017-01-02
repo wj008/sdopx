@@ -180,7 +180,7 @@ export class Lexer {
         }
         // console.log('命中：', tag, mode, {map: this.maps, regexp: regexp, retinfo: retinfo, content: content});
         // console.warn('命中：', tag, mode);
-        let {end,start,val}=retinfo;
+        let {end, start, val, len}=retinfo;
         switch (mode) {
             //找接受符号 不包括结束符号
             case 2:
@@ -190,7 +190,7 @@ export class Lexer {
                 break;
             //找接受符号 包括结束符号
             case 3:
-                end = start + length;
+                end = start + len;
                 start = source.cursor;
                 val = this.source.content.substring(start, end);
                 break;

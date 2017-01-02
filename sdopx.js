@@ -1,17 +1,10 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var compile_1 = require("./lib/compile");
-var resource_1 = require("./lib/resource");
-var template_1 = require("./lib/template");
-var Sdopx = (function (_super) {
-    __extends(Sdopx, _super);
-    function Sdopx(res) {
-        if (res === void 0) { res = null; }
-        _super.call(this);
+const compile_1 = require("./lib/compile");
+const resource_1 = require("./lib/resource");
+const template_1 = require("./lib/template");
+class Sdopx extends template_1.Template {
+    constructor(res = null) {
+        super();
         this.res = null;
         this._book = {};
         this._plugin = {};
@@ -27,21 +20,20 @@ var Sdopx = (function (_super) {
         this.template_index = 0;
         this.left_delimiter = Sdopx.left_delimiter || '{';
         this.rigth_delimiter = Sdopx.rigth_delimiter || '}';
-        var _sdopx = this._book['sdopx'] = {};
+        let _sdopx = this._book['sdopx'] = {};
         _sdopx['config'] = this._config;
         _sdopx['ldelim'] = this.left_delimiter;
         _sdopx['rdelim'] = this.rigth_delimiter;
         this.res = res;
         this.setTemplateDir(Sdopx.view_paths);
     }
-    Sdopx.prototype.assign = function (key, value) {
-        if (value === void 0) { value = null; }
+    assign(key, value = null) {
         if (typeof key == 'string') {
             this._book[key] = value;
             return;
         }
         try {
-            for (var i in key) {
+            for (let i in key) {
                 if (typeof i == 'string') {
                     this.assign(i, key[i]);
                 }
@@ -50,15 +42,14 @@ var Sdopx = (function (_super) {
         catch (e) {
             this.rethrow('assign error!');
         }
-    };
-    Sdopx.prototype.assignConfig = function (key, value) {
-        if (value === void 0) { value = null; }
+    }
+    assignConfig(key, value = null) {
         if (typeof key == 'string') {
             this._config[key] = value;
             return;
         }
         try {
-            for (var i in key) {
+            for (let i in key) {
                 if (typeof i == 'string') {
                     this.assignConfig(i, key[i]);
                 }
@@ -67,17 +58,17 @@ var Sdopx = (function (_super) {
         catch (e) {
             this.rethrow('assignConfig error!');
         }
-    };
-    Sdopx.prototype.display = function (tplname) {
+    }
+    display(tplname) {
         if (this.res) {
             this.res.write(this.fetch(tplname));
             this.res.end();
             return;
         }
         return this.fetch(tplname);
-    };
+    }
     //设置模板
-    Sdopx.prototype.setTemplateDir = function (dirnames) {
+    setTemplateDir(dirnames) {
         this.template_dirs = {};
         this.template_index = 0;
         if (!dirnames) {
@@ -88,8 +79,8 @@ var Sdopx = (function (_super) {
             this.template_index++;
         }
         else {
-            for (var key in dirnames) {
-                var value = dirnames[key];
+            for (let key in dirnames) {
+                let value = dirnames[key];
                 if (!(typeof (key) === 'number' || typeof (key) === 'string')) {
                     continue;
                 }
@@ -99,9 +90,9 @@ var Sdopx = (function (_super) {
                 this.template_dirs[key] = value;
             }
         }
-    };
+    }
     //添加模板
-    Sdopx.prototype.addTemplateDir = function (dirnames) {
+    addTemplateDir(dirnames) {
         if (!dirnames) {
             return;
         }
@@ -110,8 +101,8 @@ var Sdopx = (function (_super) {
             this.template_index++;
         }
         else {
-            for (var key in dirnames) {
-                var value = dirnames[key];
+            for (let key in dirnames) {
+                let value = dirnames[key];
                 if (!(typeof (key) === 'number' || typeof (key) === 'string')) {
                     continue;
                 }
@@ -121,10 +112,9 @@ var Sdopx = (function (_super) {
                 this.template_dirs[key] = value;
             }
         }
-    };
+    }
     //获取模板
-    Sdopx.prototype.getTemplateDir = function (key) {
-        if (key === void 0) { key = null; }
+    getTemplateDir(key = null) {
         if (key === null) {
             return this.template_dirs;
         }
@@ -132,51 +122,50 @@ var Sdopx = (function (_super) {
             return this.template_dirs[key] || null;
         }
         return null;
-    };
+    }
     //获取路径拼接
-    Sdopx.prototype.getTemplateJoined = function () {
-        var temp = [];
-        for (var i in this.template_dirs) {
-            var val = this.template_dirs[i];
+    getTemplateJoined() {
+        let temp = [];
+        for (let i in this.template_dirs) {
+            let val = this.template_dirs[i];
             temp.push(val);
         }
         return temp.join(';');
-    };
+    }
     //注册资源类型
-    Sdopx.registerResource = function (type, sourceObj) {
+    static registerResource(type, sourceObj) {
         resource_1.Resource.registerResource(type, sourceObj);
-    };
+    }
     //注册过滤器
-    Sdopx.registerFilter = function (type, filter) {
+    static registerFilter(type, filter) {
         if (!Sdopx.Filters[type]) {
             Sdopx.Filters[type] = [];
         }
         Sdopx.Filters[type].push(filter);
-    };
+    }
     //注册函数
-    Sdopx.registerFunction = function (name, func) {
+    static registerFunction(name, func) {
         if (typeof (name) !== 'string' || typeof (func) !== 'function') {
             return;
         }
         Sdopx.Functions[name] = func;
-    };
+    }
     //注册修饰器
-    Sdopx.registerModifier = function (name, func) {
+    static registerModifier(name, func) {
         if (typeof (name) !== 'string' || typeof (func) !== 'function') {
             return;
         }
         Sdopx.Modifiers[name] = func;
-    };
+    }
     //注册修饰器
-    Sdopx.registerCompileModifier = function (name, func) {
+    static registerCompileModifier(name, func) {
         if (typeof (name) !== 'string' || typeof (func) !== 'function') {
             return;
         }
         Sdopx.CompileModifiers[name] = func;
-    };
+    }
     //注册插件
-    Sdopx.registerPlugin = function (name, func, type) {
-        if (type === void 0) { type = 1; }
+    static registerPlugin(name, func, type = 1) {
         if (typeof (name) !== 'string' || typeof (func) !== 'function') {
             return;
         }
@@ -185,24 +174,21 @@ var Sdopx = (function (_super) {
         }
         func.__type = type;
         Sdopx.Plugins[name] = func;
-    };
+    }
     //注册编译器
-    Sdopx.registerCompile = function (name, func) {
-        if (func === void 0) { func = null; }
+    static registerCompile(name, func = null) {
         compile_1.Compile.registerCompile(name, func);
-    };
+    }
     //抛出异常
-    Sdopx.prototype.rethrow = function (err, lineno, tplname) {
-        if (lineno === void 0) { lineno = null; }
-        if (tplname === void 0) { tplname = null; }
+    rethrow(err, lineno = null, tplname = null) {
         if (typeof err == 'string') {
             err = new Error(err);
         }
         if (lineno == null || tplname == null) {
             throw err;
         }
-        var _a = resource_1.Resource.parseResourceName(tplname), type = _a.type, name = _a.name;
-        var resource = resource_1.Resource.getResource(type);
+        let { type, name } = resource_1.Resource.parseResourceName(tplname);
+        let resource = resource_1.Resource.getResource(type);
         if (!resource) {
             err.path = tplname;
             err.message = (tplname || Sdopx.extension) + ':'
@@ -210,7 +196,7 @@ var Sdopx = (function (_super) {
                 + err.message;
             throw err;
         }
-        var _b = resource.fetch(name, this.sdopx), _c = _b.content, content = _c === void 0 ? '' : _c, _d = _b.timestamp, timestamp = _d === void 0 ? 0 : _d, _e = _b.filepath, filepath = _e === void 0 ? tplname : _e;
+        let { content = '', timestamp = 0, filepath = tplname } = resource.fetch(name, this.sdopx);
         var lines = content.split('\n'), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
         var context = lines.slice(start, end).map(function (line, i) {
             var curr = i + start + 1;
@@ -225,33 +211,30 @@ var Sdopx = (function (_super) {
             + context + '\n\n'
             + err.message;
         throw err;
-    };
-    Sdopx.prototype.addError = function (err, lineno, tplname) {
-        if (lineno === void 0) { lineno = null; }
-        if (tplname === void 0) { tplname = null; }
+    }
+    addError(err, lineno = null, tplname = null) {
         this.rethrow(err, lineno, tplname);
-    };
-    Sdopx.version = '1.0.11';
-    Sdopx.debug = false;
-    Sdopx.extension = 'opx';
-    Sdopx.create_runfile = false;
-    Sdopx.left_delimiter = '{';
-    Sdopx.rigth_delimiter = '}';
-    Sdopx.view_paths = './views/';
-    //注册的函数
-    Sdopx.Functions = {};
-    //注册的修饰器
-    Sdopx.Modifiers = {};
-    //注册的修饰器
-    Sdopx.CompileModifiers = {};
-    //注册的过滤器
-    Sdopx.Filters = {};
-    //注册的资源类型
-    Sdopx.Resources = {};
-    //注册的插件
-    Sdopx.Plugins = {};
-    return Sdopx;
-}(template_1.Template));
+    }
+}
+Sdopx.version = '1.0.11';
+Sdopx.debug = false;
+Sdopx.extension = 'opx';
+Sdopx.create_runfile = false;
+Sdopx.left_delimiter = '{';
+Sdopx.rigth_delimiter = '}';
+Sdopx.view_paths = './views/';
+//注册的函数
+Sdopx.Functions = {};
+//注册的修饰器
+Sdopx.Modifiers = {};
+//注册的修饰器
+Sdopx.CompileModifiers = {};
+//注册的过滤器
+Sdopx.Filters = {};
+//注册的资源类型
+Sdopx.Resources = {};
+//注册的插件
+Sdopx.Plugins = {};
 exports.Sdopx = Sdopx;
-require('./lib/plugins').register(Sdopx);
+require("./lib/plugins");
 //# sourceMappingURL=sdopx.js.map

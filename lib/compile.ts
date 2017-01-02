@@ -3,7 +3,6 @@ import {Parser} from "./parser";
 import {Lexer} from "./lexer";
 import {Sdopx} from "../sdopx";
 import {Template} from "./template";
-import * as CompilePlugins from "../compile";
 
 class Varter {
 
@@ -31,12 +30,12 @@ export class Compile {
     private temp_vars = {};
     private varters = {};
     private temp_prefixs = {};
-    public source:Source;
-    private parser:Parser = null;
-    public sdopx:Sdopx = null;
-    public tpl:Template = null;
+    public source: Source;
+    private parser: Parser = null;
+    public sdopx: Sdopx = null;
+    public tpl: Template = null;
 
-    public constructor(sdopx:Sdopx, tpl:Template) {
+    public constructor(sdopx: Sdopx, tpl: Template) {
         this.sdopx = sdopx;
         this.tpl = tpl;
         this.source = tpl.getSource();
@@ -106,8 +105,7 @@ export class Compile {
                         tagend = true;
                         output.push(tpl_item.code + ';');
                         break;
-                    case Parser.CODE_TAG:
-                    {
+                    case Parser.CODE_TAG: {
                         let name = tpl_item.name;
                         let compfunc = Compile.Plugins[name] || null;
                         let code = null;
@@ -122,8 +120,7 @@ export class Compile {
                         }
                         break;
                     }
-                    case Parser.CODE_TAG_END:
-                    {
+                    case Parser.CODE_TAG_END: {
                         let name = tpl_item.name;
                         let compfunc = Compile.Plugins[name + '_close'] || null;
                         let code = null;
@@ -197,7 +194,7 @@ export class Compile {
     }
 
     public getLastPrefix() {
-        let [,data=null]=this.getEndTag() || [];
+        let [,data = null]=this.getEndTag() || [];
         if (!data) {
             return 'var';
         }
@@ -225,7 +222,7 @@ export class Compile {
     }
 
     //添加定义变量
-    public addVar(attrs:Varter) {
+    public addVar(attrs: Varter) {
         for (let key in attrs.data) {
             if (this.temp_vars[key]) {
                 let temp = this.temp_vars[key];
@@ -392,7 +389,7 @@ export class Compile {
         let block = this.parser.getBrock(name);
         if (block) {
             let args = block[0];
-            let {hide=false,prepend=false,append=false}=args;
+            let {hide = false, prepend = false, append = false}=args;
             if (hide && code === null) {
                 return null;
             }
@@ -451,8 +448,7 @@ export class Compile {
     }
 }
 
-for (let key in CompilePlugins) {
-    Compile.registerCompile(key, CompilePlugins[key]);
-}
+import '../compile';
+
 
 //注册foreach

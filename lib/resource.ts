@@ -1,8 +1,8 @@
 import {Template} from "./template";
 import {Sdopx} from "../sdopx";
 import {Source} from "./source";
-var fs = require('fs');
-var path = require('path');
+import fs = require('fs');
+import path = require('path');
 
 /**
  * Created by wj008 on 16-6-4.

@@ -1,10 +1,9 @@
 import {Sdopx} from "../sdopx";
 import {Resource} from "./resource";
 import {Source} from "./source";
-import {Lexer} from "./lexer";
 import {Compile} from "./compile";
-const utils = require('./utils');
-
+import utils = require('./utils');
+import fs = require('fs');
 export class Template {
 
     //缓存编译后的代码
@@ -37,7 +36,7 @@ export class Template {
     private complie = null;
 
     //构造函数
-    public constructor(tplname:string = null, sdopx:Sdopx = null, parent:Template = null) {
+    public constructor(tplname: string = null, sdopx: Sdopx = null, parent: Template = null) {
         this.tplname = tplname;
         this.sdopx = sdopx || this;
         this.parent = parent;
@@ -47,14 +46,14 @@ export class Template {
     }
 
     //创建模板识别ID
-    private createTplId(tplname:string) {
-        let {type,name} = Resource.parseResourceName(tplname);
+    private createTplId(tplname: string) {
+        let {type, name} = Resource.parseResourceName(tplname);
         let temp = this.sdopx.getTemplateJoined() + name;
         temp = temp.replace(/[.\/\\:\|;]/g, '_');
         return temp;
     }
 
-    public getSource():Source {
+    public getSource(): Source {
         if (this.source != null) {
             return this.source;
         }
@@ -62,7 +61,7 @@ export class Template {
         return this.source;
     }
 
-    public getCompile():Compile {
+    public getCompile(): Compile {
         if (this.complie != null) {
             return this.complie;
         }
@@ -75,7 +74,7 @@ export class Template {
         return new Template(tplname, this.sdopx, this);
     }
 
-    public fetch(tplname:string) {
+    public fetch(tplname: string) {
         this.tplname = tplname;
         this.tplID = this.createTplId(this.tplname);
         return this.fetchTpl();
@@ -171,7 +170,6 @@ export class Template {
             }
             code = out.join('\n');
             if (Sdopx.create_runfile) {
-                var fs = fs === void 0 ? require('fs') : fs;
                 fs.writeFile(codeid + '.js', code);
             }
             let unifunc = new Function('$_sdopx,__echo,__raw,__throw', code);
@@ -181,7 +179,7 @@ export class Template {
         }
         catch (e) {
             if (e instanceof SyntaxError) {
-                e.message += ' while compiling '+Sdopx.extension;
+                e.message += ' while compiling ' + Sdopx.extension;
             }
             throw e;
         }
@@ -197,7 +195,7 @@ export class Template {
         return this.getCompile().compileTemplate();
     }
 
-    private addDependency(source:Source) {
+    private addDependency(source: Source) {
         if (this.parent) {
             this.parent.addDependency(source);
         }
@@ -210,7 +208,7 @@ export class Template {
     }
 
     private validProperties(item) {
-        let {dependency=[]}=item;
+        let {dependency = []}=item;
         if (!this.sdopx.compile_check) {
             return true;
         }

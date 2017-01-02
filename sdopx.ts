@@ -259,6 +259,6 @@ export class Sdopx extends Template {
         this.rethrow(err, lineno, tplname);
     }
 }
-require('./lib/plugins').register(Sdopx);
+import './lib/plugins';
 
 

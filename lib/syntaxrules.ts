@@ -488,7 +488,7 @@ export class SyntaxRules {
 
     public static getRule(tag) {
         if (!Rules[tag]) {
-            console.error('getRule:', tag);
+            //console.error('getRule:', tag);
             return null;
         }
         return Rules[tag].rule;
@@ -496,7 +496,7 @@ export class SyntaxRules {
 
     public static  getToken(tag) {
         if (!Rules[tag]) {
-            console.error('getToken:', tag);
+            //console.error('getToken:', tag);
             return null;
         }
         return Rules[tag].token || '';
@@ -504,7 +504,7 @@ export class SyntaxRules {
 
     public static  getNext(tag) {
         if (!Rules[tag]) {
-            console.error('getNext:', tag);
+            //console.error('getNext:', tag);
             return null;
         }
         return Rules[tag].next || null;
@@ -512,7 +512,7 @@ export class SyntaxRules {
 
     public static  getClose(tag) {
         if (!Rules[tag]) {
-            console.error('getClose:', tag);
+            //console.error('getClose:', tag);
             return null;
         }
         if (Rules[tag].close instanceof Array) {
@@ -525,7 +525,7 @@ export class SyntaxRules {
 
     public static  getOpen(tag) {
         if (!Rules[tag]) {
-            console.error('getOpen:', tag);
+            //console.error('getOpen:', tag);
             return null;
         }
         return Rules[tag].open || null;

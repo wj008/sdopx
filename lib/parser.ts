@@ -1,9 +1,5 @@
-/**
- * Created by Administrator on 2016/6/9.
- */
 import {Compile} from "./compile";
 import {Lexer} from "./lexer";
-import {TreeMap}  from './tree_map';
 import {Sdopx} from "../sdopx";
 import {Source} from "./source";
 
@@ -22,13 +18,13 @@ export class Parser {
     public static CODE_RAW = 'raw';
     private blocks_stack = [];
     public blocks = [];
-    private lexer:Lexer = null;
+    private lexer: Lexer = null;
     private compiler = null;
-    private sdopx:Sdopx = null;
+    private sdopx: Sdopx = null;
     private source = null;
     private lexData = null;
 
-    public constructor(sdopx:Sdopx, compile:Compile, source:Source) {
+    public constructor(sdopx: Sdopx, compile: Compile, source: Source) {
         this.compiler = compile;
         this.sdopx = sdopx;
         this.lexer = new Lexer(source);
@@ -156,7 +152,7 @@ export class Parser {
         if (item && item.token) {
             let callback = this['pars_' + item.token] || null;
             if (typeof(callback) !== 'function') {
-                console.error('pars_' + item.token, 'missing.');
+                //console.error('pars_' + item.token, 'missing.');
                 return null;
             }
             return callback.call(this, item);
@@ -230,7 +226,6 @@ export class Parser {
             text += ret.code;
             node = ret.node;
         }
-        return null;
     }
 
     public pars_code(item) {
@@ -515,10 +510,6 @@ export class Parser {
                 return temp;
             }
         }
-
-        temp.node = item.node;
-
-        return temp;
     }
 
     //属性
