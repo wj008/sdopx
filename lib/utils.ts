@@ -1,8 +1,8 @@
-"use strict";
 /**
  * Created by Administrator on 2017/1/3.
  */
 const regExpChars = /[|\\{}()[\]^$+*?.]/g;
+
 const _ENCODE_HTML_RULES = {
     "&": "&amp;",
     "<": "&lt;",
@@ -10,17 +10,16 @@ const _ENCODE_HTML_RULES = {
     '"': "&#34;",
     "'": "&#39;"
 };
-function escapeRegExpChars(string) {
+
+export function escapeRegExpChars(string) {
     if (!string) {
         return '';
     }
     return String(string).replace(regExpChars, '\\$&');
 }
-exports.escapeRegExpChars = escapeRegExpChars;
-function escapeXml(string) {
+
+export function escapeXml(string) {
     return String(string).replace(/[&<>'"]/g, function (c) {
         return _ENCODE_HTML_RULES[c] || c;
     });
 }
-exports.escapeXml = escapeXml;
-//# sourceMappingURL=utils.js.map
