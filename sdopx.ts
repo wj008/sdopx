@@ -1,10 +1,14 @@
 import {Compile} from "./lib/compile";
 import {Resource} from "./lib/resource";
 import {Template} from "./lib/template";
+import fs =require('fs');
 
 export class Sdopx extends Template {
 
-    public static version = '1.0.11';
+    public static version = (function () {
+        let {version} = JSON.parse(fs.readFileSync(__dirname + `/package.json`, 'utf-8'));
+        return version;
+    })();
     public static debug = false;
     public static extension = 'opx';
     public static create_runfile = false;
@@ -236,7 +240,7 @@ export class Sdopx extends Template {
                 + err.message;
             throw err;
         }
-        let {content='', timestamp=0, filepath=tplname} =resource.fetch(name, this.sdopx);
+        let {content = '', timestamp = 0, filepath = tplname} =resource.fetch(name, this.sdopx);
         var lines = content.split('\n')
             , start = Math.max(lineno - 3, 0)
             , end = Math.min(lines.length, lineno + 3);

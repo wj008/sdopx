@@ -2,6 +2,7 @@
 const compile_1 = require("./lib/compile");
 const resource_1 = require("./lib/resource");
 const template_1 = require("./lib/template");
+const fs = require("fs");
 class Sdopx extends template_1.Template {
     constructor(res = null) {
         super();
@@ -216,7 +217,10 @@ class Sdopx extends template_1.Template {
         this.rethrow(err, lineno, tplname);
     }
 }
-Sdopx.version = '1.0.11';
+Sdopx.version = (function () {
+    let { version } = JSON.parse(fs.readFileSync(__dirname + `/package.json`, 'utf-8'));
+    return version;
+})();
 Sdopx.debug = false;
 Sdopx.extension = 'opx';
 Sdopx.create_runfile = false;
