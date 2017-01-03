@@ -1,11 +1,11 @@
 "use strict";
-const compile_1 = require("../lib/compile");
-compile_1.Compile.registerCompile('while', (name, args, compile) => {
+var compile_1 = require("../lib/compile");
+compile_1.Compile.registerCompile('while', function (name, args, compile) {
     compile.openTag('while');
-    return `while(${args.code}){`;
+    return "while(" + args.code + "){";
 });
-compile_1.Compile.registerCompile('while_close', (name, compile) => {
+compile_1.Compile.registerCompile('while_close', function (name, compile) {
     compile.closeTag(['while']);
-    return `}`;
+    return "}";
 });
 //# sourceMappingURL=while.js.map

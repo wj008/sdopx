@@ -1,8 +1,8 @@
 "use strict";
-const compile_1 = require("../lib/compile");
-compile_1.Compile.registerCompile('assign', (name, args, compile) => {
-    let key = args.var || null;
-    let { value = null, code = null } = args;
+var compile_1 = require("../lib/compile");
+compile_1.Compile.registerCompile('assign', function (name, args, compile) {
+    var key = args.var || null;
+    var _a = args.value, value = _a === void 0 ? null : _a, _b = args.code, code = _b === void 0 ? null : _b;
     if (code == null) {
         if (key === null) {
             compile.addError('The assign tag \'var\' is a must.');
@@ -11,46 +11,46 @@ compile_1.Compile.registerCompile('assign', (name, args, compile) => {
             compile.addError('The assign tag \'value\' is a must.');
         }
         if (key == '' || !/^\w+$/.test(key)) {
-            compile.addError(`assign tag attribute syntax error in 'var', mast be string`);
+            compile.addError("assign tag attribute syntax error in 'var', mast be string");
         }
         if (compile.hasVar(key)) {
-            let temp = compile.getVar(key);
-            return temp.replace(/@key/g, key, temp) + ' = ' + value + ';';
+            var temp_1 = compile.getVar(key);
+            return temp_1.replace(/@key/g, key, temp_1) + ' = ' + value + ';';
         }
-        let prefix = compile.getLastPrefix();
-        let vars = compile.getVarter(prefix);
+        var prefix = compile.getLastPrefix();
+        var vars = compile.getVarter(prefix);
         vars.add(key);
         compile.addVar(vars);
-        let temp = compile.getVar(key);
+        var temp = compile.getVar(key);
         return 'var ' + temp.replace(/@key/g, key, temp) + ' = ' + value + ';';
     }
     else {
-        let m = code.match(/^\$_sdopx\._book\['(\w+)'\](.+)/);
+        var m = code.match(/^\$_sdopx\._book\['(\w+)'\](.+)/);
         if (!m) {
             return code + ';';
         }
-        let key = m[1];
-        let other = m[2];
-        if (compile.hasVar(key)) {
-            let temp = compile.getVar(key);
-            return temp.replace(/@key/g, key, temp) + other + ';';
+        var key_1 = m[1];
+        var other = m[2];
+        if (compile.hasVar(key_1)) {
+            var temp_2 = compile.getVar(key_1);
+            return temp_2.replace(/@key/g, key_1, temp_2) + other + ';';
         }
-        let prefix = compile.getLastPrefix();
-        let vars = compile.getVarter(prefix);
-        vars.add(key);
+        var prefix = compile.getLastPrefix();
+        var vars = compile.getVarter(prefix);
+        vars.add(key_1);
         compile.addVar(vars);
-        let temp = compile.getVar(key);
+        var temp = compile.getVar(key_1);
         if (/^\s*(=(?!=))/.test(other)) {
-            return 'var ' + temp.replace(/@key/g, key, temp) + other + ';';
+            return 'var ' + temp.replace(/@key/g, key_1, temp) + other + ';';
         }
         else {
-            return temp.replace(/@key/g, key, temp) + other + ';';
+            return temp.replace(/@key/g, key_1, temp) + other + ';';
         }
     }
 });
-compile_1.Compile.registerCompile('global', (name, args, compile) => {
-    let key = args.var || null;
-    let { value = null, code = null } = args;
+compile_1.Compile.registerCompile('global', function (name, args, compile) {
+    var key = args.var || null;
+    var _a = args.value, value = _a === void 0 ? null : _a, _b = args.code, code = _b === void 0 ? null : _b;
     if (code == null) {
         if (key === null) {
             compile.addError('The global tag \'var\' is a must.');
@@ -59,23 +59,23 @@ compile_1.Compile.registerCompile('global', (name, args, compile) => {
             compile.addError('The global tag \'value\' is a must.');
         }
         if (key == '' || !/^\w+$/.test(key)) {
-            compile.addError(`global tag attribute syntax error in 'var'.`);
+            compile.addError("global tag attribute syntax error in 'var'.");
         }
         return '$_sdopx._book[\'' + key + '\'] = ' + value + ';';
     }
     else {
         //如果是全局的
-        let m = code.match(/^\$_sdopx\._book/);
+        var m = code.match(/^\$_sdopx\._book/);
         if (/^\$_sdopx\._book/.test(code.trim())) {
             return code + ';';
         }
-        let mx = code.trim().match(/^[a-z]+[0-9]*_(\w+)(.+)/);
+        var mx = code.trim().match(/^[a-z]+[0-9]*_(\w+)(.+)/);
         if (!mx) {
             return code + ';';
         }
-        let key = mx[1];
-        let other = mx[2];
-        return '$_sdopx._book[\'' + key + '\']' + other + ';';
+        var key_2 = mx[1];
+        var other = mx[2];
+        return '$_sdopx._book[\'' + key_2 + '\']' + other + ';';
     }
 });
 //# sourceMappingURL=assign.js.map

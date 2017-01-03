@@ -1,9 +1,9 @@
 "use strict";
-const compile_1 = require("../lib/compile");
-compile_1.Compile.registerCompile('include', (name, args, compile) => {
-    let { file = null } = args;
+var compile_1 = require("../lib/compile");
+compile_1.Compile.registerCompile('include', function (name, args, compile) {
+    var _a = args.file, file = _a === void 0 ? null : _a;
     if (file === null) {
-        compile.addError(`The include tag 'file' is a must.`);
+        compile.addError("The include tag 'file' is a must.");
     }
     delete args.file;
     var isoutput = true;
@@ -13,16 +13,16 @@ compile_1.Compile.registerCompile('include', (name, args, compile) => {
     catch (e) {
     }
     delete args.output;
-    let output = [];
+    var output = [];
     if (isoutput) {
         output.push('__raw(');
     }
-    let temp = [];
+    var temp = [];
     for (var key in args) {
-        let val = (args[key] == '' || args[key] == null) ? 'null' : args[key];
-        temp.push(`'${key}':${val}`);
+        var val = (args[key] == '' || args[key] == null) ? 'null' : args[key];
+        temp.push("'" + key + "':" + val);
     }
-    output.push(`$_sdopx.getSubTemplate(${file},{${temp.join(',')}})`);
+    output.push("$_sdopx.getSubTemplate(" + file + ",{" + temp.join(',') + "})");
     if (isoutput) {
         output.push(')');
     }

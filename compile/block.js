@@ -1,16 +1,16 @@
 "use strict";
-const compile_1 = require("../lib/compile");
-compile_1.Compile.registerCompile('block', (tagname, args, compile) => {
-    let { name = null, hide = false, append = false, prepend = false } = args;
+var compile_1 = require("../lib/compile");
+compile_1.Compile.registerCompile('block', function (tagname, args, compile) {
+    var _a = args.name, name = _a === void 0 ? null : _a, _b = args.hide, hide = _b === void 0 ? false : _b, _c = args.append, append = _c === void 0 ? false : _c, _d = args.prepend, prepend = _d === void 0 ? false : _d;
     if (name === null) {
-        compile.addError(`The block tag 'name' is a must.`);
+        compile.addError("The block tag 'name' is a must.");
     }
     name = name.replace(/^['"]+|['"]+$/g, '');
     if (name == '' || !/\w+/.test(name)) {
-        compile.addError(`block tag attribute syntax error in 'name', mast be string`);
+        compile.addError("block tag attribute syntax error in 'name', mast be string");
     }
-    let offset = compile.source.cursor;
-    let code = compile.getBlock(name);
+    var offset = compile.source.cursor;
+    var code = compile.getBlock(name);
     if (code === null) {
         code = compile.getParentBlock(name);
     }
@@ -34,9 +34,9 @@ compile_1.Compile.registerCompile('block', (tagname, args, compile) => {
         return code;
     }
 });
-compile_1.Compile.registerCompile('block_close', (tagname, compile) => {
-    let [, data] = compile.closeTag(['block']);
-    let code = data[1] || '';
+compile_1.Compile.registerCompile('block_close', function (tagname, compile) {
+    var _a = compile.closeTag(['block']), data = _a[1];
+    var code = data[1] || '';
     return code;
 });
 //# sourceMappingURL=block.js.map

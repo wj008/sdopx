@@ -1,7 +1,7 @@
 "use strict";
-const compile_1 = require("../lib/compile");
-compile_1.Compile.registerCompile('function', (name, args, compile) => {
-    let { fn = null } = args;
+var compile_1 = require("../lib/compile");
+compile_1.Compile.registerCompile('function', function (name, args, compile) {
+    var _a = args.fn, fn = _a === void 0 ? null : _a;
     //起始
     if (fn === null) {
         throw new Error('The function tag \'fn\' is must.');
@@ -9,30 +9,30 @@ compile_1.Compile.registerCompile('function', (name, args, compile) => {
     if (!/^\w+$/.test(fn)) {
         throw new Error('The function tag \'fn\' is invalid.');
     }
-    let tdefs = [];
-    let temp = [];
-    let output = [];
-    let prefix = compile.getTempPrefix('params');
-    let vars = compile.getVarter(prefix);
+    var tdefs = [];
+    var temp = [];
+    var output = [];
+    var prefix = compile.getTempPrefix('params');
+    var vars = compile.getVarter(prefix);
     for (var key in args) {
         if (key == 'fn') {
             continue;
         }
-        let value = args[key];
+        var value = args[key];
         vars.add(key);
         temp.push(prefix + '_' + key);
-        tdefs.push(`var ${prefix}_${key}=${prefix}['${key}']===void 0 ? ${value} : ${prefix}['${key}'];`);
+        tdefs.push("var " + prefix + "_" + key + "=" + prefix + "['" + key + "']===void 0 ? " + value + " : " + prefix + "['" + key + "'];");
     }
     compile.addVar(vars);
-    output.push(`function sdopx_${fn}(${prefix}){`);
+    output.push("function sdopx_" + fn + "(" + prefix + "){");
     output.push(tdefs.join('\n'));
     compile.openTag('function', [prefix, fn]);
-    let str = output.join('\n');
+    var str = output.join('\n');
     return output.join('\n');
 });
-compile_1.Compile.registerCompile('function_close', (name, compile) => {
-    let [, data] = compile.closeTag(['function']);
+compile_1.Compile.registerCompile('function_close', function (name, compile) {
+    var _a = compile.closeTag(['function']), data = _a[1];
     compile.removeVar(data[0]);
-    return `}`;
+    return "}";
 });
 //# sourceMappingURL=function.js.map
