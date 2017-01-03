@@ -1,7 +1,7 @@
 {
   "name": "sdopx",
   "main": "sdopx.js",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "license": "Apache-2.0",
   "description": "Embedded JavaScript templates",
   "keywords": [
@@ -12,7 +12,6 @@
     "opx",
     "sdopx"
   ],
-  
   "author": "wj008 <26029682@qq.com>",
   "repository": "git://github.com/wj008/sdopx.git",
   "engines": {
