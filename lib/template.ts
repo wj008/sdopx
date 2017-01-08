@@ -170,7 +170,7 @@ export class Template {
             }
             code = out.join('\n');
             if (Sdopx.create_runfile) {
-                fs.writeFile(codeid + '.js', code);
+                fs.writeFileSync(codeid + '.js', code);
             }
             let unifunc = new Function('$_sdopx,__echo,__raw,__throw', code);
             this.property.unifunc = unifunc;
