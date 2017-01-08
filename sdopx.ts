@@ -14,7 +14,8 @@ export class Sdopx extends Template {
     public static create_runfile = false;
     public static left_delimiter = '{';
     public static rigth_delimiter = '}';
-    public res = null;
+
+    public context = null;
 
     public _book = {};
     public _plugin = {};
@@ -47,7 +48,7 @@ export class Sdopx extends Template {
     public left_delimiter;
     public rigth_delimiter;
 
-    public constructor(res = null) {
+    public constructor(context = null) {
         super();
         this.left_delimiter = Sdopx.left_delimiter || '{';
         this.rigth_delimiter = Sdopx.rigth_delimiter || '}';
@@ -55,7 +56,7 @@ export class Sdopx extends Template {
         _sdopx['config'] = this._config;
         _sdopx['ldelim'] = this.left_delimiter;
         _sdopx['rdelim'] = this.rigth_delimiter;
-        this.res = res;
+        this.context = context;
         this.setTemplateDir(Sdopx.view_paths);
     }
 
@@ -92,13 +93,14 @@ export class Sdopx extends Template {
     }
 
     public display(tplname) {
-        if (this.res) {
-            this.res.write(this.fetch(tplname));
-            this.res.end();
+        if (this.context) {
+            this.context.write(this.fetch(tplname));
+            this.context.end();
             return;
         }
         return this.fetch(tplname);
     }
+
 
     //设置模板
     public setTemplateDir(dirnames) {
