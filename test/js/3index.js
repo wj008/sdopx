@@ -1,7 +1,7 @@
 //模板变量赋值测试例子
 var path = require('path');
 var Sdopx = require("../../sdopx").Sdopx;
-Sdopx.create_runfile = true; //输出编译后的文件
+//Sdopx.create_runfile = true; //输出编译后的文件
 
 //设置模板路径
 Sdopx.view_paths = path.join(__dirname, '../views/');
