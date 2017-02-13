@@ -2,7 +2,7 @@ import {Source} from "./source";
 import {Parser} from "./parser";
 import {Sdopx} from "../sdopx";
 import {Template} from "./template";
-import "../compile";
+
 
 class Varter {
 
@@ -27,13 +27,14 @@ export class Compile {
     public closed = false;
     //缓存编译
     private blockData = {};
-    protected temp_vars = {};
-    protected varters = {};
-    protected temp_prefixs = {};
+    private temp_vars = {};
+    private varters = {};
+    private temp_prefixs = {};
     public source: Source;
     private parser: Parser = null;
     public sdopx: Sdopx = null;
     public tpl: Template = null;
+
 
     public constructor(sdopx: Sdopx, tpl: Template) {
         this.sdopx = sdopx;
@@ -237,10 +238,17 @@ export class Compile {
         }
     }
 
+    public getVarKeys() {
+        return Object.keys(this.temp_vars);
+    }
+
     //获取定义变量
-    public getVar(key) {
+    public getVar(key, replace: boolean = false) {
         let temp = this.temp_vars[key];
         let value = temp[temp.length - 1];
+        if (replace) {
+            value = value.replace(/@key/g, key, value);
+        }
         return value;
     }
 
@@ -419,22 +427,26 @@ export class Compile {
         return code;
     }
 
+    public setVarTemp(dist: any) {
+        this.temp_vars = dist.temp_vars;
+        this.varters = dist.varters;
+        this.temp_prefixs = dist.temp_prefixs;
+    }
+
+    public getVarTemp() {
+        return {temp_vars: this.temp_vars, varters: this.varters, temp_prefixs: this.temp_prefixs};
+    }
+
     //获取父标签的节点
     public getParentBlock(name) {
         if (!this.tpl.parent) {
             return null;
         }
         let pcomplie = this.tpl.parent.getCompile();
-        let temp_vars = pcomplie.temp_vars;
-        let varters = pcomplie.varters;
-        let temp_prefixs = pcomplie.temp_prefixs;
-        pcomplie.temp_vars = this.temp_vars;
-        pcomplie.varters = this.varters;
-        pcomplie.temp_prefixs = this.temp_prefixs;
+        let temp = pcomplie.getVarTemp();
+        pcomplie.setVarTemp(this.getVarTemp());
         let code = pcomplie.compileBlock(name);
-        pcomplie.temp_vars = temp_vars;
-        pcomplie.varters = varters;
-        pcomplie.temp_prefixs = temp_prefixs;
+        pcomplie.setVarTemp(temp);
         this.addBlock(name, code);
         return code;
     }
@@ -457,5 +469,5 @@ export class Compile {
     }
 }
 
+require("../compile");
 
-//注册foreach
