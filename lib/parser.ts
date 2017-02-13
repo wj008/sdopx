@@ -268,8 +268,7 @@ export class Parser {
             if (!compiler.hasVar(key)) {
                 return '$_sdopx._book[\'' + key + '\']';
             }
-            let temp = compiler.getVar(key);
-            return temp.replace(/@key/g, key, temp);
+            return compiler.getVar(key, true);
         })(item.value, this.compiler);
 
         return temp;
