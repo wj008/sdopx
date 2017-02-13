@@ -1,8 +1,8 @@
 import {Source} from "./source";
 import {Parser} from "./parser";
-import {Lexer} from "./lexer";
 import {Sdopx} from "../sdopx";
 import {Template} from "./template";
+import "../compile";
 
 class Varter {
 
@@ -27,9 +27,9 @@ export class Compile {
     public closed = false;
     //缓存编译
     private blockData = {};
-    private temp_vars = {};
-    private varters = {};
-    private temp_prefixs = {};
+    protected temp_vars = {};
+    protected varters = {};
+    protected temp_prefixs = {};
     public source: Source;
     private parser: Parser = null;
     public sdopx: Sdopx = null;
@@ -194,7 +194,7 @@ export class Compile {
     }
 
     public getLastPrefix() {
-        let [,data = null]=this.getEndTag() || [];
+        let [, data = null]=this.getEndTag() || [];
         if (!data) {
             return 'var';
         }
@@ -298,7 +298,7 @@ export class Compile {
             this.addError('Extra closing tag' + tags.join(','));
             return null;
         }
-        let [tagname,data]=this.tag_stack.pop();
+        let [tagname, data]=this.tag_stack.pop();
         if (tags.indexOf(tagname) < 0) {
             this.addError('Close tags yet' + tagname);
             return null;
@@ -425,7 +425,16 @@ export class Compile {
             return null;
         }
         let pcomplie = this.tpl.parent.getCompile();
+        let temp_vars = pcomplie.temp_vars;
+        let varters = pcomplie.varters;
+        let temp_prefixs = pcomplie.temp_prefixs;
+        pcomplie.temp_vars = this.temp_vars;
+        pcomplie.varters = this.varters;
+        pcomplie.temp_prefixs = this.temp_prefixs;
         let code = pcomplie.compileBlock(name);
+        pcomplie.temp_vars = temp_vars;
+        pcomplie.varters = varters;
+        pcomplie.temp_prefixs = temp_prefixs;
         this.addBlock(name, code);
         return code;
     }
@@ -447,8 +456,6 @@ export class Compile {
         Compile.Plugins[type] = func;
     }
 }
-
-import '../compile';
 
 
 //注册foreach
