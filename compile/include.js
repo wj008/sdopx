@@ -17,10 +17,20 @@ compile_1.Compile.registerCompile('include', function (name, args, compile) {
     if (isoutput) {
         output.push('__raw(');
     }
-    var temp = [];
+    var argsmap = {};
     for (var key in args) {
         var val = (args[key] == '' || args[key] == null) ? 'null' : args[key];
-        temp.push("'" + key + "':" + val);
+        argsmap[key] = val;
+    }
+    //将目标零时变量注入到模板
+    for (var _i = 0, _b = compile.getVarKeys(); _i < _b.length; _i++) {
+        var vkey = _b[_i];
+        var val = compile.getVar(vkey, true);
+        argsmap[vkey] = val;
+    }
+    var temp = [];
+    for (var key in argsmap) {
+        temp.push("'" + key + "':" + argsmap[key]);
     }
     output.push("$_sdopx.getSubTemplate(" + file + ",{" + temp.join(',') + "})");
     if (isoutput) {
