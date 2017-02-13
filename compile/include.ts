@@ -16,10 +16,19 @@ Compile.registerCompile('include', (name, args, compile: Compile) => {
     if (isoutput) {
         output.push('__raw(');
     }
-    let temp = [];
-    for (var key in args) {
+    let argsmap = {};
+    for (let key in args) {
         let val = (args[key] == '' || args[key] == null) ? 'null' : args[key];
-        temp.push(`'${key}':${val}`);
+        argsmap[key] = val;
+    }
+    //将目标零时变量注入到模板
+    for (let vkey of compile.getVarKeys()) {
+        let val = compile.getVar(vkey, true);
+        argsmap[vkey] = val;
+    }
+    let temp = [];
+    for (let key in argsmap) {
+        temp.push(`'${key}':${argsmap[key]}`);
     }
     output.push(`$_sdopx.getSubTemplate(${file},{${temp.join(',')}})`);
     if (isoutput) {
