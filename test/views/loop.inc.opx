@@ -1,0 +1,1 @@
+<li>{$rs.id}-{$rs.name}</li>

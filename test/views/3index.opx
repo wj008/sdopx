@@ -15,3 +15,7 @@
 
 {/block}
 
+{block name=loop}
+<li>{$rs.id}-{$rs.name}</li>
+{include file="loop.inc"}
+{/block}
