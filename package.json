@@ -1,7 +1,7 @@
 {
   "name": "sdopx",
-  "main": "sdopx.js",
-  "version": "1.0.17",
+  "main": "./push/sdopx.js",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "description": "Embedded JavaScript templates",
   "keywords": [
