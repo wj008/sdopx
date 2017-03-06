@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试代码扩展{$title}</title>
+</head>
+<body>
+测试代码扩展
+{block name=body}hello{/block}
+{include file="3foot"}
+<ul>
+    {foreach from=$list item=rs}
+    {block name=loop}{/block}
+    {/foreach}
+</ul>
+</body>
+</html>
