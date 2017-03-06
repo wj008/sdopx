@@ -1,7 +1,7 @@
 //1测试变量 可使用命令行直接运行
 
 var path = require('path');
-var Sdopx = require("../../sdopx").Sdopx;
+var Sdopx = require("../../push/sdopx").Sdopx;
 Sdopx.create_runfile = true;
 
 //设置模板路径

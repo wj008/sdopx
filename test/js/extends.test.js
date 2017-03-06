@@ -3,7 +3,7 @@
  */
 //模板变量赋值测试例子
 var path = require('path');
-var Sdopx = require("../../sdopx").Sdopx;
+var Sdopx = require("../../push/sdopx").Sdopx;
 //Sdopx.create_runfile = true; //输出编译后的文件
 
 //设置模板路径
