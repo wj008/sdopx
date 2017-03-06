@@ -41,13 +41,13 @@ export class Resource {
 
     //获取源数据
     public static getSource(sdopx, tplname, tplid) {
-        let {type,name}=Resource.parseResourceName(tplname);
+        let {type, name}=Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
         return new Source(resource, sdopx, tplname, tplid, type, name);
     }
 
     //获取源数据
-    public static getTplSource(tpl:Template) {
+    public static getTplSource(tpl: Template) {
         let sdopx = tpl.sdopx;
         let tplname = tpl.tplname;
         let tplid = tpl.tplID;
@@ -65,55 +65,11 @@ export class Resource {
 }
 //注册文件读取类
 Resource.registerResource('file', {
-
-    getpath: function (tplname, sdopx) {
-        let filepath = null;
-        if (path.sep == '\\') {
-            if (/[A-Z]:/i.test(tplname)) {
-                if (fs.existsSync(tplname)) {
-                    return tplname;
-                }
-            }
-        } else {
-            if (/\//.test(tplname)) {
-                if (fs.existsSync(tplname)) {
-                    return tplname;
-                }
-            }
-        }
-        if (tplname.substr(0, 1) == '@') {
-            let common_path = sdopx.getTemplateDir('common');
-            if (!common_path) {
-                sdopx.rethrow(`common dir is not defiend!`);
-            }
-            tplname = tplname.substr(1);
-            let fpath = path.join(common_path, tplname);
-            if (!/\.[a-z]+/i.test(tplname)) {
-                fpath += '.'+Sdopx.extension;
-            }
-            if (fs.existsSync(fpath)) {
-                filepath = fpath;
-            }
-        } else {
-            let tpldirs = sdopx.getTemplateDir();
-            for (let key in tpldirs) {
-                if (key === 'common') {
-                    continue;
-                }
-                let fpath = path.join(tpldirs[key], tplname + '.'+Sdopx.extension);
-                if (fs.existsSync(fpath)) {
-                    filepath = fpath;
-                    break;
-                }
-            }
-        }
-        return filepath;
-    },
-    fetch: function (tplname, sdopx) {
-        let filepath = this.getpath(tplname, sdopx);
+    fetch: function (tplname, sdopx, source) {
+        let filepath = source.getPath(tplname, sdopx);
         if (filepath == null) {
             if (!/\.[a-z]+/i.test(tplname)) {
-                tplname += '.'+Sdopx.extension;
+                tplname += '.' + Sdopx.extension;
             }
             sdopx.rethrow(`file does not exist:'${tplname}'`);
             return {content: '', timestamp: 0, filepath: tplname};
@@ -127,8 +83,8 @@ Resource.registerResource('file', {
         let timestamp = new Date(state.mtime).getTime();
         return {content: content, timestamp: timestamp, filepath: filepath};
     },
-    getTimestamp: function (tplname, sdopx) {
-        let filepath = this.getpath(tplname, sdopx);
+    getTimestamp: function (tplname, sdopx, source) {
+        let filepath = source.getPath(tplname, sdopx);
         if (filepath == null) {
             return 0;
         }
@@ -139,36 +95,36 @@ Resource.registerResource('file', {
 
 //继承资源类型
 Resource.registerResource('extends', {
-    fetch: function (tplname, sdopx) {
+    fetch: function (tplname, sdopx, source) {
         let names = tplname.split('|');
         if (names.length < 2) {
             sdopx.rethrow(`file does not exist:'${tplname}'`);
         }
-        let {type,name}=Resource.parseResourceName(tplname);
+        let {type, name}=Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
         if (!resource) {
             sdopx.rethrow(`resource does not exist,type:'${type}'`);
         }
         let tplchild = names.pop();
         let extend = names.join('|');
-        let {content='',timestamp=0} = resource.fetch(tplchild, sdopx);
-        content = sdopx.left_delimiter_raw + 'extends file=\'' + extend + '\'' + sdopx.right_delimiter_raw + content;
+        let {content = '', timestamp = 0} = resource.fetch(tplchild, sdopx, source);
+        content = source.left_delimiter_raw + 'extends file=\'' + extend + '\'' + source.right_delimiter_raw + content;
         return {content: content, timestamp: timestamp};
     },
 
-    getTimestamp: function (tplname, sdopx) {
+    getTimestamp: function (tplname, sdopx, source) {
         let names = tplname.split('|');
         if (names.length < 2) {
             sdopx.rethrow(`file does not exist:'${tplname}'`);
             return 0;
         }
-        let {type,name}=Resource.parseResourceName(tplname);
+        let {type, name}=Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
         if (!resource) {
             sdopx.rethrow(`resource does not exist,type:'${type}'`);
             return 0;
         }
         let tplchild = names.pop();
-        return resource.getTimestamp(tplchild, sdopx);
+        return resource.getTimestamp(tplchild, sdopx, source);
     }
 });
