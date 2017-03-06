@@ -48,6 +48,7 @@ export class Sdopx extends Template {
     public left_delimiter;
     public rigth_delimiter;
 
+
     public constructor(context = null) {
         super();
         this.left_delimiter = Sdopx.left_delimiter || '{';
