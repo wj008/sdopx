@@ -38,8 +38,8 @@ Compile.registerCompile('literal', (name, args, compile: Compile) => {
 
 Compile.registerCompile('literal_close', (name, compile: Compile) => {
     let [,data]=compile.closeTag(['literal']);
-    let [,left,rigth]=data;
-    compile.source.changDelimiter(left, rigth);
+    let [, left, right]=data;
+    compile.source.changDelimiter(left, right);
     return '';
 });
 
