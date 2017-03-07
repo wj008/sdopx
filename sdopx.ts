@@ -13,7 +13,7 @@ export class Sdopx extends Template {
     public static extension = 'opx';
     public static create_runfile = false;
     public static left_delimiter = '{';
-    public static rigth_delimiter = '}';
+    public static right_delimiter = '}';
 
     public context = null;
 
@@ -46,17 +46,16 @@ export class Sdopx extends Template {
     private template_index = 0;
 
     public left_delimiter;
-    public rigth_delimiter;
-
+    public right_delimiter;
 
     public constructor(context = null) {
         super();
         this.left_delimiter = Sdopx.left_delimiter || '{';
-        this.rigth_delimiter = Sdopx.rigth_delimiter || '}';
+        this.right_delimiter = Sdopx.right_delimiter || '}';
         let _sdopx = this._book['sdopx'] = {};
         _sdopx['config'] = this._config;
         _sdopx['ldelim'] = this.left_delimiter;
-        _sdopx['rdelim'] = this.rigth_delimiter;
+        _sdopx['rdelim'] = this.right_delimiter;
         this.context = context;
         this.setTemplateDir(Sdopx.view_paths);
     }
@@ -266,6 +265,4 @@ export class Sdopx extends Template {
         this.rethrow(err, lineno, tplname);
     }
 }
-import './lib/plugins';
-
-
+require("./lib/plugins");
