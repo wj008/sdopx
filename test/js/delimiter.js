@@ -7,7 +7,7 @@ var Sdopx = require("../../push/sdopx").Sdopx;
 Sdopx.view_paths = path.join(__dirname, '../views/');
 //更改分解符号
 Sdopx.left_delimiter = '{@';
-Sdopx.rigth_delimiter = '@}';
+Sdopx.right_delimiter = '@}';
 
 var opx = new Sdopx();
 //注册变量 简单的变量 (非数组/对象)
