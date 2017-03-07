@@ -62,13 +62,70 @@ export class Resource {
         return null;
     }
 
+    public static getPath(tplname, sdopx) {
+        //处理绝对路径
+        if (path.sep == '\\') {
+            if (/^[A-Z]:/i.test(tplname)) {
+                if (fs.existsSync(tplname)) {
+                    return tplname;
+                }
+            }
+        } else {
+            if (/^\//.test(tplname)) {
+                if (fs.existsSync(tplname)) {
+                    return tplname;
+                }
+            }
+        }
+
+        let testPath = function (dirname, tplname) {
+            let fpath = path.join(dirname, tplname);
+            if (!/\.[a-z]+$/i.test(tplname)) {
+                let epath = fpath + '.' + Sdopx.extension;
+                if (fs.existsSync(epath)) {
+                    return epath;
+                }
+                return null;
+            }
+            //有自己的后缀
+            if (fs.existsSync(fpath)) {
+                return fpath;
+            }
+            //补后缀
+            if (fs.existsSync(fpath + '.' + Sdopx.extension)) {
+                return fpath + '.' + Sdopx.extension
+            }
+            return null;
+        }
+        //公共目录
+        if (tplname.substr(0, 1) == '@') {
+            let common_path = sdopx.getTemplateDir('common');
+            if (!common_path) {
+                sdopx.rethrow(`common dir is not defiend!`);
+            }
+            tplname = tplname.substr(1);
+            return testPath(common_path, tplname);
+        }
+        let tpldirs = sdopx.getTemplateDir();
+        for (let key in tpldirs) {
+            if (key === 'common') {
+                continue;
+            }
+            let fpath = testPath(tpldirs[key], tplname);
+            if (fpath) {
+                return fpath;
+            }
+        }
+        return null;
+    }
+
 }
 //注册文件读取类
 Resource.registerResource('file', {
-    fetch: function (tplname, sdopx, source) {
-        let filepath = source.getPath(tplname, sdopx);
+    fetch: function (tplname, sdopx) {
+        let filepath = Resource.getPath(tplname, sdopx);
         if (filepath == null) {
-            if (!/\.[a-z]+/i.test(tplname)) {
+            if (!/\.[a-z]+$/i.test(tplname)) {
                 tplname += '.' + Sdopx.extension;
             }
             sdopx.rethrow(`file does not exist:'${tplname}'`);
@@ -83,8 +140,8 @@ Resource.registerResource('file', {
         let timestamp = new Date(state.mtime).getTime();
         return {content: content, timestamp: timestamp, filepath: filepath};
     },
-    getTimestamp: function (tplname, sdopx, source) {
-        let filepath = source.getPath(tplname, sdopx);
+    getTimestamp: function (tplname, sdopx) {
+        let filepath = Resource.getPath(tplname, sdopx);
         if (filepath == null) {
             return 0;
         }
@@ -95,7 +152,7 @@ Resource.registerResource('file', {
 
 //继承资源类型
 Resource.registerResource('extends', {
-    fetch: function (tplname, sdopx, source) {
+    fetch: function (tplname, sdopx) {
         let names = tplname.split('|');
         if (names.length < 2) {
             sdopx.rethrow(`file does not exist:'${tplname}'`);
@@ -107,12 +164,12 @@ Resource.registerResource('extends', {
         }
         let tplchild = names.pop();
         let extend = names.join('|');
-        let {content = '', timestamp = 0} = resource.fetch(tplchild, sdopx, source);
-        content = source.left_delimiter_raw + 'extends file=\'' + extend + '\'' + source.right_delimiter_raw + content;
+        let {content = '', timestamp = 0} = resource.fetch(tplchild, sdopx);
+        content = sdopx.left_delimiter + 'extends file=\'' + extend + '\'' + sdopx.right_delimiter + content;
         return {content: content, timestamp: timestamp};
     },
 
-    getTimestamp: function (tplname, sdopx, source) {
+    getTimestamp: function (tplname, sdopx) {
         let names = tplname.split('|');
         if (names.length < 2) {
             sdopx.rethrow(`file does not exist:'${tplname}'`);
@@ -125,6 +182,6 @@ Resource.registerResource('extends', {
             return 0;
         }
         let tplchild = names.pop();
-        return resource.getTimestamp(tplchild, sdopx, source);
+        return resource.getTimestamp(tplchild, sdopx);
     }
 });

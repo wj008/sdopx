@@ -44,7 +44,7 @@ export class Source {
         this.type = type;
         this.name = name;
         this.uid = tplid;
-        this.changDelimiter(this.sdopx.left_delimiter, this.sdopx.rigth_delimiter);
+        this.changDelimiter(this.sdopx.left_delimiter, this.sdopx.right_delimiter);
     }
 
     public changDelimiter(left = '{', right = '}') {
@@ -56,7 +56,7 @@ export class Source {
 
     //加载模板
     public load() {
-        let {content = '', timestamp = 0} =this.resource.fetch(this.name, this.sdopx, this);
+        let {content = '', timestamp = 0} =this.resource.fetch(this.name, this.sdopx);
         if (content.length > 0 && Sdopx.Filters['pre'] && Sdopx.Filters['pre'] instanceof Array) {
             for (let i = 0; i < Sdopx.Filters['pre'].length; i++) {
                 let func = Sdopx.Filters['pre'][i];
@@ -73,52 +73,8 @@ export class Source {
 
     //获取资源最后更新时间
     public getTimestamp() {
-        this.timestamp = this.resource.getTimestamp(this.name, this.sdopx, this);
+        this.timestamp = this.resource.getTimestamp(this.name, this.sdopx);
         return this.timestamp;
-    }
-
-    public getPath(tplname, sdopx) {
-        let filepath = null;
-        if (path.sep == '\\') {
-            if (/[A-Z]:/i.test(tplname)) {
-                if (fs.existsSync(tplname)) {
-                    return tplname;
-                }
-            }
-        } else {
-            if (/\//.test(tplname)) {
-                if (fs.existsSync(tplname)) {
-                    return tplname;
-                }
-            }
-        }
-        if (tplname.substr(0, 1) == '@') {
-            let common_path = sdopx.getTemplateDir('common');
-            if (!common_path) {
-                sdopx.rethrow(`common dir is not defiend!`);
-            }
-            tplname = tplname.substr(1);
-            let fpath = path.join(common_path, tplname);
-            if (!/\.[a-z]+/i.test(tplname)) {
-                fpath += '.' + Sdopx.extension;
-            }
-            if (fs.existsSync(fpath)) {
-                filepath = fpath;
-            }
-        } else {
-            let tpldirs = sdopx.getTemplateDir();
-            for (let key in tpldirs) {
-                if (key === 'common') {
-                    continue;
-                }
-                let fpath = path.join(tpldirs[key], tplname + '.' + Sdopx.extension);
-                if (fs.existsSync(fpath)) {
-                    filepath = fpath;
-                    break;
-                }
-            }
-        }
-        return filepath;
     }
 
 }

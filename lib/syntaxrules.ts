@@ -484,7 +484,7 @@ class Rules {
 }
 export class SyntaxRules {
 
-    private static delimiter = {left: '\\{', rigth: '\\}'};
+    private static delimiter = {left: '\\{', right: '\\}'};
 
     public static getRule(tag) {
         if (!Rules[tag]) {
@@ -532,7 +532,7 @@ export class SyntaxRules {
     }
 
     public static reset(left, right) {
-        if (SyntaxRules.delimiter.left == left && SyntaxRules.delimiter.rigth == right) {
+        if (SyntaxRules.delimiter.left == left && SyntaxRules.delimiter.right == right) {
             return;
         }
         Rules.Open_Tpl.rule = new RegExp(left);
@@ -543,7 +543,7 @@ export class SyntaxRules {
         Rules.Raw.rule = new RegExp('\\|raw\\s*(?=' + right + ')');
         Rules.VarKeyWord.rule = new RegExp('\\w+(?=(?:\\s+|' + right + '))');
         SyntaxRules.delimiter.left = left;
-        SyntaxRules.delimiter.rigth = right;
+        SyntaxRules.delimiter.right = right;
     }
 
 }
