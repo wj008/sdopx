@@ -76,7 +76,7 @@ export class Compile {
             if (html_item.code != '') {
                 //如果是标签结束的需要清除内容第一个换行
                 if (tagend) {
-                    if (/^(\r\n|\n|r)\s+<\w+/.test(html_item.code)) {
+                    if (/^(\r\n|\n|r)\s+<\/?\w+/.test(html_item.code)) {
                         html_item.code = html_item.code.replace(/^(\r\n|\n|\r)\s+/, '');
                     } else {
                         html_item.code = html_item.code.replace(/^(\r\n|\n|\r)/g, '');
