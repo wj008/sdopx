@@ -2,6 +2,7 @@ import {Compile} from "./lib/compile";
 import {Resource} from "./lib/resource";
 import {Template} from "./lib/template";
 import fs =require('fs');
+import crypto=require('crypto');
 
 export class Sdopx extends Template {
 
@@ -44,6 +45,7 @@ export class Sdopx extends Template {
     //模板目录
     private template_dirs = {};
     private template_index = 0;
+    private _joined: string = null;
 
     public left_delimiter;
     public right_delimiter;
@@ -101,7 +103,6 @@ export class Sdopx extends Template {
         return this.fetch(tplname);
     }
 
-
     //设置模板
     public setTemplateDir(dirnames) {
         this.template_dirs = {};
@@ -109,6 +110,7 @@ export class Sdopx extends Template {
         if (!dirnames) {
             return;
         }
+        this._joined = null;
         if (typeof(dirnames) === 'string') {
             this.template_dirs[this.template_index] = dirnames;
             this.template_index++;
@@ -132,6 +134,7 @@ export class Sdopx extends Template {
         if (!dirnames) {
             return;
         }
+        this._joined = null;
         if (typeof(dirnames) === 'string') {
             this.template_dirs[this.template_index] = dirnames;
             this.template_index++;
@@ -162,13 +165,22 @@ export class Sdopx extends Template {
     }
 
     //获取路径拼接
-    public getTemplateJoined() {
+    public getTemplateJoined(): string {
+        if (this._joined) {
+            return this._joined;
+        }
         let temp = [];
         for (let i in this.template_dirs) {
             let val = this.template_dirs[i];
             temp.push(val);
         }
-        return temp.join(';');
+        let joined = temp.join(';');
+        if (joined[32]) {
+            let instance = crypto.createHash('md5');
+            instance.update(joined, 'utf8');
+            joined = instance.digest('hex') + '_';
+        }
+        return this._joined = joined;
     }
 
     //注册资源类型
