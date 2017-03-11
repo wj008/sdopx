@@ -28,7 +28,7 @@ Compile.registerCompile('function', (name, args, compile: Compile) => {
         tdefs.push(`var ${prefix}_${key}=${prefix}['${key}']===void 0 ? ${value} : ${prefix}['${key}'];`);
     }
     compile.addVar(vars);
-    output.push(`$_sdopx.funcMap['${fn}']=function(${prefix}){`);
+    output.push(`$_sdopx.funcMap['${fn}']=function(${prefix},__out,$_sdopx){var __echo=__out.echo,__raw=__out.raw;`);
     output.push(tdefs.join('\n'));
     compile.openTag('function', [prefix, fn]);
     let str = output.join('\n');
