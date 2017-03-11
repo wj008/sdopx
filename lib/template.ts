@@ -5,6 +5,7 @@ import {Compile} from "./compile";
 import utils = require('./utils');
 import fs = require('fs');
 import crypto=require('crypto');
+
 export class Template {
 
     //缓存编译后的代码
@@ -26,7 +27,7 @@ export class Template {
     public property = {dependency: {}, unifunc: null};
 
     //继承的模板
-    public extends_uid = {};
+    public extends_tplId = {};
 
     //需要重新编译
     public recomplie = false;

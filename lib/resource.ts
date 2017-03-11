@@ -4,7 +4,6 @@ import {Source} from "./source";
 import fs = require('fs');
 import path = require('path');
 
-
 /**
  * Created by wj008 on 16-6-4.
  */
