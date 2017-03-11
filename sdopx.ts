@@ -50,6 +50,8 @@ export class Sdopx extends Template {
     public left_delimiter;
     public right_delimiter;
 
+    public funcMap: {[p: string]: Function} = {};
+
     public constructor(context = null) {
         super();
         this.left_delimiter = Sdopx.left_delimiter || '{';
