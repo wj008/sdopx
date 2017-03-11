@@ -132,7 +132,7 @@ export class Template {
         }
         unifunc.call(null, this.sdopx, __echo, __raw, __throw);
         let out = __output.join('');
-        if (Sdopx.Filters['output'] && Sdopx.Filters['output'] instanceof Array) {
+        if (this === this.sdopx && Sdopx.Filters['output'] && Sdopx.Filters['output'] instanceof Array) {
             for (let i = 0; i < Sdopx.Filters['output'].length; i++) {
                 let func = Sdopx.Filters['output'][i];
                 out = func(out, this.sdopx);
