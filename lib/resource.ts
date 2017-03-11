@@ -4,6 +4,7 @@ import {Source} from "./source";
 import fs = require('fs');
 import path = require('path');
 
+
 /**
  * Created by wj008 on 16-6-4.
  */
@@ -32,26 +33,27 @@ export class Resource {
 
     //获取类型名称
     public static parseResourceName(tplname) {
-        let temp = tplname.match(/^(\w+):(.*)$/);
+        let temp = tplname.match(/^(\w+):/);
         if (!temp) {
             return {type: 'file', name: tplname};
         }
-        return {type: temp[1].toLowerCase(), name: temp[2]};
+        let code = tplname.replace(/^(\w+):/, '');
+        return {type: temp[1].toLowerCase(), name: code};
     }
 
     //获取源数据
-    public static getSource(sdopx, tplname, tplid) {
+    public static getSource(sdopx, tplname, tplId) {
         let {type, name}=Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
-        return new Source(resource, sdopx, tplname, tplid, type, name);
+        return new Source(resource, sdopx, tplname, tplId, type, name);
     }
 
     //获取源数据
     public static getTplSource(tpl: Template) {
         let sdopx = tpl.sdopx;
         let tplname = tpl.tplname;
-        let tplid = tpl.tplID;
-        return Resource.getSource(sdopx, tplname, tplid);
+        let tplID = tpl.tplId;
+        return Resource.getSource(sdopx, tplname, tplID);
     }
 
     //加载文件数据对象
@@ -183,5 +185,24 @@ Resource.registerResource('extends', {
         }
         let tplchild = names.pop();
         return resource.getTimestamp(tplchild, sdopx);
+    }
+});
+
+Resource.registerResource('string', {
+    fetch: function (tplname, sdopx) {
+        return {content: tplname, timestamp: 0};
+    },
+    getTimestamp: function (tplname, sdopx) {
+        return -1;
+    }
+});
+
+Resource.registerResource('base64', {
+    fetch: function (tplname, sdopx) {
+        let buf = new Buffer(tplname, 'base64')
+        return {content: buf.toString('utf8'), timestamp: 0};
+    },
+    getTimestamp: function (tplname, sdopx) {
+        return -1;
     }
 });

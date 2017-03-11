@@ -4,6 +4,7 @@ import {Source} from "./source";
 import {Compile} from "./compile";
 import utils = require('./utils');
 import fs = require('fs');
+import crypto=require('crypto');
 export class Template {
 
     //缓存编译后的代码
@@ -13,7 +14,7 @@ export class Template {
     public sdopx = null;
 
     //模板ID
-    public tplID = null;
+    public tplId = null;
 
     //父模板
     public parent = null;
@@ -41,16 +42,21 @@ export class Template {
         this.sdopx = sdopx || this;
         this.parent = parent;
         if (tplname !== null) {
-            this.tplID = this.createTplId(this.tplname);
+            this.tplId = this.createTplId(this.tplname);
         }
     }
 
     //创建模板识别ID
     private createTplId(tplname: string) {
         let {type, name} = Resource.parseResourceName(tplname);
+        if (type !== 'file') {
+            let instance = crypto.createHash('md5');
+            instance.update(name, 'utf8');
+            name = instance.digest('hex');
+        }
         let temp = this.sdopx.getTemplateJoined() + name;
         temp = temp.replace(/[.\/\\:\|;]/g, '_');
-        return temp;
+        return type + '_' + temp;
     }
 
     public getSource(): Source {
@@ -76,13 +82,13 @@ export class Template {
 
     public fetch(tplname: string) {
         this.tplname = tplname;
-        this.tplID = this.createTplId(this.tplname);
+        this.tplId = this.createTplId(this.tplname);
         return this.fetchTpl();
     }
 
     //输出模板内容
     private fetchTpl() {
-        let codeid = this.tplID;
+        let codeid = this.tplId;
         //如果强制编译
         if (this.sdopx.force_compile) {
             return this.compileTemplate(codeid);
@@ -199,10 +205,10 @@ export class Template {
         if (this.parent) {
             this.parent.addDependency(source);
         }
-        let tplid = source.uid;
-        this.property.dependency[tplid] = {
+        let tplId = source.tplId;
+        this.property.dependency[tplId] = {
             tplname: source.tplname,
-            tplid: tplid,
+            tplId: tplId,
             time: source.getTimestamp()
         }
     }
@@ -217,7 +223,7 @@ export class Template {
         }
         for (let i in dependency) {
             let file = dependency[i];
-            let source = Resource.getSource(this.sdopx, file.tplname, file.tplid);
+            let source = Resource.getSource(this.sdopx, file.tplname, file.tplId);
             let mtime = source.getTimestamp();
             if (mtime == 0 || mtime > file.time) {
                 return false;

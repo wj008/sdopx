@@ -23,7 +23,7 @@ export class Source {
     //资源是否存在
     public exitst = false;
     //资源ID
-    public uid = null;
+    public tplId = null;
     //加载器
     public resource = null;
     //引擎
@@ -37,13 +37,13 @@ export class Source {
     public right_delimiter_raw = '}';
     public end_literal = null;
 
-    public constructor(resource, sdopx, tplname, tplid, type, name) {
+    public constructor(resource, sdopx, tplname, tplId, type, name) {
         this.resource = resource;
         this.sdopx = sdopx;
         this.tplname = tplname;
         this.type = type;
         this.name = name;
-        this.uid = tplid;
+        this.tplId = tplId;
         this.changDelimiter(this.sdopx.left_delimiter, this.sdopx.right_delimiter);
     }
 
