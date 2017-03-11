@@ -73,12 +73,14 @@ export class Compile {
                 this.closed = true;
                 return false;
             }
-            if (html_item.code != '') {
+            if (html_item.code.length > 0) {
                 if (/(\r\n|\n|r)\s*$/.test(html_item.code)) {
                     html_item.code = html_item.code.replace(/(\r\n|\n|r)\s*$/, '');
                 }
-                let code = '__raw(' + JSON.stringify(html_item.code) + ');';
-                output.push(code);
+                if (html_item.code.length > 0) {
+                    let code = '__raw(' + JSON.stringify(html_item.code) + ');';
+                    output.push(code);
+                }
             }
             tagend = false;
             if (html_item.next == 'Finish') {
