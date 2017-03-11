@@ -5,6 +5,10 @@ Compile.registerCompile('call', (name, args, compile: Compile) => {
     if (fn === null) {
         compile.addError(`The call tag 'fn' is a must.`);
     }
+    if (typeof fn !== 'string') {
+        compile.addError('The function tag \'fn\' is invalid.');
+    }
+    fn = fn.replace(/(^['"])|(['"]$)/g, '');
     let temp = [];
     for (var key in args) {
         if (key == 'fn') {
@@ -14,6 +18,6 @@ Compile.registerCompile('call', (name, args, compile: Compile) => {
         temp.push(`'${key}':${val}`);
     }
     let params = `{${temp.join(',')}}`;
-    return `if(typeof sdopx_${fn} =='function'){ sdopx_${fn}(${params},{echo:__echo,raw:__raw},$_sdopx);}`;
+    return `if(typeof $_sdopx.funcMap['${fn}'] =='function'){ $_sdopx.funcMap['${fn}'](${params},{echo:__echo,raw:__raw},$_sdopx);}`;
 });
 

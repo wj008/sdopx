@@ -4,10 +4,14 @@ Compile.registerCompile('function', (name, args, compile: Compile) => {
     let {fn = null} = args;
     //起始
     if (fn === null) {
-        throw new Error('The function tag \'fn\' is must.');
+        compile.addError('The function tag \'fn\' is must.');
     }
+    if (typeof fn !== 'string') {
+        compile.addError('The function tag \'fn\' is invalid.');
+    }
+    fn = fn.replace(/(^['"])|(['"]$)/g, '');
     if (!/^\w+$/.test(fn)) {
-        throw new Error('The function tag \'fn\' is invalid.');
+        compile.addError('The function tag \'fn\' is invalid.');
     }
     let tdefs = [];
     let temp = [];
@@ -24,7 +28,7 @@ Compile.registerCompile('function', (name, args, compile: Compile) => {
         tdefs.push(`var ${prefix}_${key}=${prefix}['${key}']===void 0 ? ${value} : ${prefix}['${key}'];`);
     }
     compile.addVar(vars);
-    output.push(`function sdopx_${fn}(${prefix}){`);
+    output.push(`$_sdopx.funcMap['${fn}']=function(${prefix}){`);
     output.push(tdefs.join('\n'));
     compile.openTag('function', [prefix, fn]);
     let str = output.join('\n');
@@ -32,7 +36,7 @@ Compile.registerCompile('function', (name, args, compile: Compile) => {
 });
 
 Compile.registerCompile('function_close', (name, compile: Compile) => {
-    let [,data]= compile.closeTag(['function']);
+    let [, data]= compile.closeTag(['function']);
     compile.removeVar(data[0]);
     return `}`;
 });
