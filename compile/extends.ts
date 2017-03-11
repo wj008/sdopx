@@ -17,11 +17,11 @@ Compile.registerCompile('extends', (name, args, compile: Compile) => {
         tpl_name = 'extends:' + tpl_name;
     }
     let tpl = compile.tpl.createChildTemplate(tpl_name);
-    let uid = tpl.getSource().uid;
-    if (compile.sdopx.extends_uid[uid]) {
+    let tplId = tpl.getSource().tplId;
+    if (compile.sdopx.extends_tplId[tplId]) {
         compile.addError(`The extends tag file Repeated references!`);
     }
-    compile.sdopx.extends_uid[uid] = true;
+    compile.sdopx.extends_tplId[tplId] = true;
     compile.closed = true;
     return tpl.compileTemplateSource();
 });
