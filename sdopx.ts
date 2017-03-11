@@ -41,7 +41,7 @@ export class Sdopx extends Template {
     //注册的插件
     public static Plugins = {};
 
-    public extends_uid = {};
+    public extends_tplId = {};
     //模板目录
     private template_dirs = {};
     private template_index = 0;
