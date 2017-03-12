@@ -223,7 +223,7 @@ export class Lexer {
             this.initNext(next);
             let data = this.match();
             if (data === null) {
-                this.addError(`Syntax Error:Error parsing template, grammar suitable match is found，tag:'${tag}'`, source.cursor);
+                this.addError(`Syntax Error:Error parsing template, grammar suitable match is not found，tag:'${tag}'`, source.cursor);
                 return null;
             }
             tag = data.tag;
