@@ -145,7 +145,7 @@ export class Template {
     private runTemplate(codeid) {
         if (Template.complie_cache[codeid]) {
             let item = Template.complie_cache[codeid];
-            if (this.validProperties(item) && item.unifunc && typeof item.unifunc) {
+            if (this.validProperties(item) && item.unifunc && typeof item.unifunc == 'function') {
                 return this.run(item.unifunc);
             }
         }
