@@ -189,7 +189,7 @@ Resource.registerResource('extends', {
 
 Resource.registerResource('string', {
     fetch: function (tplname, sdopx) {
-        return {content: tplname, timestamp: 0};
+        return {content: tplname, timestamp: 0, filepath: 'string'};
     },
     getTimestamp: function (tplname, sdopx) {
         return -1;
@@ -199,7 +199,7 @@ Resource.registerResource('string', {
 Resource.registerResource('base64', {
     fetch: function (tplname, sdopx) {
         let buf = new Buffer(tplname, 'base64')
-        return {content: buf.toString('utf8'), timestamp: 0};
+        return {content: buf.toString('utf8'), timestamp: 0, filepath: 'base64'};
     },
     getTimestamp: function (tplname, sdopx) {
         return -1;
