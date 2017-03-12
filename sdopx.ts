@@ -3,7 +3,10 @@ import {Resource} from "./lib/resource";
 import {Template} from "./lib/template";
 import fs =require('fs');
 import crypto=require('crypto');
-
+export class SdopxError extends Error {
+    public type = 'SdopxError';
+    public path = '';
+}
 export class Sdopx extends Template {
 
     public static version = (function () {
@@ -242,7 +245,7 @@ export class Sdopx extends Template {
     //抛出异常
     public rethrow(err, lineno = null, tplname = null) {
         if (typeof err == 'string') {
-            err = new Error(err);
+            err = new SdopxError(err);
         }
         if (lineno == null || tplname == null) {
             throw err;
@@ -251,9 +254,8 @@ export class Sdopx extends Template {
         let resource = Resource.getResource(type);
         if (!resource) {
             err.path = tplname;
-            err.message = (tplname || Sdopx.extension) + ':'
-                + lineno + '\n'
-                + err.message;
+            err.stack = (tplname || Sdopx.extension) + ':'
+                + lineno + "\n\n" + err.stack;
             throw err;
         }
         let {content = '', timestamp = 0, filepath = tplname} =resource.fetch(name, this.sdopx);
@@ -268,10 +270,10 @@ export class Sdopx extends Template {
                 + line;
         }).join('\n');
         err.path = filepath;
-        err.message = (filepath || Sdopx.extension) + ':'
+        err.stack = (filepath || Sdopx.extension) + ':'
             + lineno + '\n'
             + context + '\n\n'
-            + err.message;
+            + err.stack;
         throw err;
     }
 
