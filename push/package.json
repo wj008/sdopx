@@ -1,0 +1,23 @@
+{
+  "name": "sdopx",
+  "main": "./push/sdopx.js",
+  "version": "1.1.16",
+  "license": "Apache-2.0",
+  "description": "Embedded JavaScript templates",
+  "keywords": [
+    "nodejs smarty",
+    "smarty",
+    "template",
+    "engine",
+    "opx",
+    "sdopx"
+  ],
+  "author": "wj008 <26029682@qq.com>",
+  "repository": "git://github.com/wj008/sdopx.git",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "@types/node": "^6.0.55"
+  }
+}
