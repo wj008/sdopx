@@ -2,6 +2,7 @@ import {Compile} from "./compile";
 import {Lexer} from "./lexer";
 import {Sdopx} from "../sdopx";
 import {Source} from "./source";
+import {Rules} from './syntaxrules';
 
 export class Parser {
 
@@ -79,7 +80,7 @@ export class Parser {
         if (ret.map === Parser.CODE_EXPRESS) {
             let exp = this.pars_express();
             if (!exp) {
-                if (this.lexData.testNext('Close_Tpl', false)) {
+                if (this.lexData.testNext('closeTpl', false)) {
                     if (Sdopx.debug) {
                         ret.info = tree.getInfo();
                     }
@@ -99,7 +100,7 @@ export class Parser {
         }
         //解析表达式
         if (ret.map === Parser.CODE_EXPRESS) {
-            if (tree[1] && tree[1].tag == 'Variable' && tree[2] && tree[2].value == '=') {
+            if (tree[1] && tree[1].tag == 'variable' && tree[2] && tree[2].value == '=') {
                 ret.map = Parser.CODE_ASSIGN;
             }
         }
@@ -116,7 +117,7 @@ export class Parser {
             return null;
         }
         let item = tree.next();
-        if (!tree.testNext('Close_Config')) {
+        if (!tree.testNext('closeConfig')) {
             return null;
         }
         let temp = {
@@ -162,7 +163,7 @@ export class Parser {
 
     //解析表达式
     public pars_express() {
-        if (this.lexData.testNext('Close_Tpl', false)) {
+        if (this.lexData.testNext('closeTpl', false)) {
             return null;
         }
         let temp = {
@@ -338,7 +339,7 @@ export class Parser {
             return null;
         }
         //如果后面是字符串
-        if (nitem.tag == 'TplString') {
+        if (nitem.tag == 'tplString') {
             let ntemp = this.pars_tpl_string(nitem);
             if (!ntemp) {
                 return null;
@@ -347,7 +348,7 @@ export class Parser {
             return temp;
         }
         //如果后面是关闭字符串
-        if (nitem.tag == 'Close_TplString') {
+        if (nitem.tag == 'closeTplString') {
             let ntemp = this.pars_string_close(nitem);
             if (!ntemp) {
                 return null;
@@ -356,7 +357,7 @@ export class Parser {
             return temp;
         }
         //如果后面是代码分界符
-        if (nitem.tag == 'Open_TplDelimiter') {
+        if (nitem.tag == 'openTplDelimiter') {
             let ntemp = this.pars_delimi_open(nitem);
             if (!ntemp) {
                 return null;
@@ -375,7 +376,7 @@ export class Parser {
         };
         let pitem = this.lexData.prev(false);
         //如果前面是结束分界符
-        if (pitem.tag == 'Close_TplDelimiter') {
+        if (pitem.tag == 'closeTplDelimiter') {
             temp.code = ''
             return temp;
         }
@@ -393,7 +394,7 @@ export class Parser {
         if (!nitem) {
             return null;
         }
-        if (nitem.tag == 'Close_TplString') {
+        if (nitem.tag == 'closeTplString') {
             let ntemp = this.pars_string_close(nitem);
             if (!ntemp) {
                 return null;
@@ -401,7 +402,7 @@ export class Parser {
             temp.code += ntemp.code;
             return temp;
         }
-        if (nitem.tag == 'Open_TplDelimiter') {
+        if (nitem.tag == 'openTplDelimiter') {
             let ntemp = this.pars_delimi_open(nitem);
             if (!ntemp) {
                 return null;
@@ -418,7 +419,7 @@ export class Parser {
             node: item.node
         };
         let pitem = this.lexData.prev(false);
-        if (pitem.tag == 'Open_TplString') {
+        if (pitem.tag == 'openTplString') {
             temp.code = ''
             return temp;
         }
@@ -435,7 +436,7 @@ export class Parser {
         if (!nitem) {
             return null;
         }
-        if (nitem.tag == 'TplString') {
+        if (nitem.tag == 'tplString') {
             let ntemp = this.pars_tpl_string(nitem);
             if (!ntemp) {
                 return null;
@@ -443,7 +444,7 @@ export class Parser {
             temp.code = ('+\'' + ntemp.code);
             return temp;
         }
-        if (nitem.tag == 'Close_TplString' || nitem.tag == 'Open_TplDelimiter') {
+        if (nitem.tag == 'closeTplString' || nitem.tag == 'openTplDelimiter') {
             let ntemp = this.pars_tpl_string(nitem);
             if (!ntemp) {
                 return null;
@@ -467,14 +468,14 @@ export class Parser {
 
         while (true) {
             let item = this.lexData.next();
-            if (item.tag == 'Close_TagAttr') {
+            if (item.tag == 'closeTagAttr') {
                 continue;
             }
-            if (item.tag == 'Close_Tpl') {
+            if (item.tag == 'closeTpl') {
                 temp.node = item.node;
                 return temp;
             }
-            if (item.tag == 'Open_TagAttr') {
+            if (item.tag == 'openTagAttr') {
                 let ret = this.pars_attr(item);
                 if (!ret) {
                     return null;
@@ -487,7 +488,7 @@ export class Parser {
                 temp.args[name] = exp.code;
                 continue;
             }
-            else if (item.tag == 'Single_TagAttr') {
+            else if (item.tag == 'singleTagAttr') {
                 let ret = this.pars_attr(item);
                 if (!ret) {
                     return null;
@@ -538,7 +539,7 @@ export class Parser {
 
     //关闭标签
     public pars_tagend(item) {
-        if (!this.lexData.testNext('Close_Tpl')) {
+        if (!this.lexData.testNext('closeTpl')) {
             return null;
         }
         let temp = {
@@ -554,7 +555,7 @@ export class Parser {
             map: Parser.CODE_EMPTY,
             node: 'html',
         };
-        if (item.tag != 'Close_Tpl') {
+        if (item.tag != 'closeTpl') {
             return null;
         }
         return temp;
@@ -580,14 +581,14 @@ export class Parser {
         }
         while (true) {
             let item = this.lexData.next();
-            if (item.map == 'Close_TagAttr') {
+            if (item.map == 'closeTagAttr') {
                 continue;
             }
-            if (item.map == 'Close_Tpl') {
+            if (item.map == 'closeTpl') {
                 temp['start'] = item.end;
                 continue;
             }
-            if (item.map == 'Open_TagAttr') {
+            if (item.map == 'openTagAttr') {
                 let ret = this.pars_attr(item);
                 if (!ret) {
                     return null;
@@ -601,7 +602,7 @@ export class Parser {
                 temp.args[name] = exp.code;
                 continue;
             }
-            else if (item.map == 'Single_TagAttr') {
+            else if (item.map == 'singleTagAttr') {
                 let ret = this.pars_attr(item);
                 if (!ret) {
                     return null;
@@ -639,7 +640,7 @@ export class Parser {
         };
         //移除冒号
         let citem = this.lexData.next();
-        if (!(citem && citem.node == 'modifier' && citem.value.replace(/(^\s+|\s+$)/g, '') == ':')) {
+        if (!(citem && citem.node == Rules.BOUND_MODIFIER && citem.value.replace(/(^\s+|\s+$)/g, '') == ':')) {
             this.lexData.prev();
         }
         return temp;
@@ -681,7 +682,7 @@ export class Parser {
                 params.push(exp.code);
             }
             let item = this.lexData.next();
-            if (item.tag !== 'Comma') {
+            if (item.tag !== 'comma') {
                 this.lexData.prev();
                 break;
             }

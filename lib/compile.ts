@@ -83,10 +83,10 @@ export class Compile {
                 }
             }
             tagend = false;
-            if (html_item.next == 'Finish') {
+            if (html_item.next == 'finish') {
                 return false;
             }
-            if (html_item.next == 'Init') {
+            if (html_item.next == 'init') {
                 let tpl_item = this.parser.parsTpl();
                 if (!tpl_item) {
                     return false;
@@ -142,7 +142,7 @@ export class Compile {
                 }
                 return !this.closed;
             }
-            if (html_item.next == 'Init_Config') {
+            if (html_item.next == 'initConfig') {
                 let cfgitem = this.parser.parsConfig();
                 if (cfgitem == null) {
                     return false;
@@ -159,7 +159,7 @@ export class Compile {
                 return !this.closed;
             }
             //处理注释
-            if (html_item.next == 'Init_Comment') {
+            if (html_item.next == 'initComment') {
                 tagend = true;
                 let cmitem = this.parser.parsComment();
                 if (cmitem == null) {
@@ -168,7 +168,7 @@ export class Compile {
                 return !this.closed;
             }
 
-            if (html_item.next == 'Close_Literal') {
+            if (html_item.next == 'closeLiteral') {
                 tagend = true;
                 let lit_item = this.parser.parsLiteral();
                 if (!lit_item) {
@@ -184,19 +184,19 @@ export class Compile {
             }
             return !this.closed;
         };
-        while (loop.call(this));
+        while (loop.call(this)) ;
         this.closed = true;
         this.removeVar("var");
         let code = output.join('\n');
         if (this.tag_stack.length > 0) {
-            let [tagname,]=this.tag_stack.pop();
+            let [tagname,] = this.tag_stack.pop();
             this.addError(`did not find the end tag：'${tagname}'.`);
         }
         return code;
     }
 
     public getLastPrefix() {
-        let [, data = null]=this.getEndTag() || [];
+        let [, data = null] = this.getEndTag() || [];
         if (!data) {
             return 'var';
         }
@@ -307,7 +307,7 @@ export class Compile {
             this.addError('Extra closing tag' + tags.join(','));
             return null;
         }
-        let [tagname, data]=this.tag_stack.pop();
+        let [tagname, data] = this.tag_stack.pop();
         if (tags.indexOf(tagname) < 0) {
             this.addError('Close tags yet' + tagname);
             return null;
@@ -398,7 +398,7 @@ export class Compile {
         let block = this.parser.getBrock(name);
         if (block) {
             let args = block[0];
-            let {hide = false, prepend = false, append = false}=args;
+            let {hide = false, prepend = false, append = false} = args;
             if (hide && code === null) {
                 return null;
             }

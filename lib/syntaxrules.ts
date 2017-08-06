@@ -1,547 +1,712 @@
 //语法规则配置表
-class Rules {
 
-    //变量入口表达式
-    public static Expression = function (pfx = false) {
-        let data = {
-            Variable: 0,
-            Number: 0,
-            String: 0,
-            Open_TplString: 0,
-            KeyWord: 0,
-            Open_Array: 0,//数组
-            Open_Object: 0,
-            Not: 0,//变量表达式可以 ! 开头
-            PrefixSymbol: 0,//变量表达式可以 ++? --? +? -? 开头
-            PrefixVarSymbol: 0,
-            Open_Brackets: 0,
-            Open_Function: 0,
+
+export class Rules {
+
+    public static BOUND_TPL = 1; //模板
+    public static BOUND_TAG = 2;  //标签中
+    public static BOUND_TAG_ATTR = 4; //属性中
+    public static BOUND_MODIFIER = 8; //修饰器中
+    public static BOUND_ARRAY = 16; //在数组中
+    public static BOUND_OBJECT = 32; //在数组中
+    public static BOUND_PARENTHESES = 64;//小括号
+    public static BOUND_SUBSCRIPT = 128;//中括号
+    public static BOUND_FUNCTION = 256;//函数中
+    public static BOUND_METHOD = 512;//函数中
+    public static BOUND_DYMETHOD = 1024;//函数中
+    public static BOUND_TERNARY = 2048;//函数中
+    public static BOUND_TPL_STREXP = 4096; //在字符串中的表达式
+    public static BOUND_TPL_STRING = 8192;//函数中
+    //变量表达式
+    private static expression(type = 0) {
+        let ret = {
+            variable: 0,
+            number: 0,
+            string: 0,
+            openTplString: 0,
+            keyWord: 0,
+            openArray: 0,//数组
+            openObject: 0,
+            not: 0,//变量表达式可以 ! 开头
+            prefixSymbol: 0,//变量表达式可以 ++? --? +? -? 开头
+            prefixVarSymbol: 0,
+            openParentheses: 0,
+            openFunction: 0,
         };
-        //如果是前置符号过来的 前面不再允许有前置符号
-        if (pfx) {
-            delete data.PrefixSymbol;
-            delete data.PrefixVarSymbol;
+        if (type == 1) {
+            delete ret.prefixSymbol;
+            delete ret.prefixVarSymbol;
         }
-        return data;
-    };
+        return ret;
+    }
+
     //变量表达式尾部
-    public static ExpreEnd = function (type = 0) {
+    private static finishExpression = function (type = 0) {
         let data = {
-            Close_TplDelimiter: {mode: 0, flags: ['tplexp']},
-            Close_Tpl: {mode: 0, flags: ['modifier', 'tagattr', 'tag', 'tpl']},
-            Close_TagAttr: {mode: 1, flags: ['modifier', 'tagattr']},
-            Close_Array: {mode: 0, flags: ['array']},//任何数值在数值之间都可以关闭
-            Close_Object: {mode: 0, flags: ['object']},
-            Close_Brackets: {mode: 0, flags: ['brackets']},
-            Close_Ternary: {mode: 0, flags: ['ternary']},
-            Close_Subscript: {mode: 0, flags: ['subscript']},
-            Close_Function: {mode: 0, flags: ['function']},
-            Close_Method: {mode: 0, flags: ['method']}, //关闭方法
-            Close_DynamicMethod: {mode: 0, flags: ['dymethod']}, //关闭动态方法
-            Open_Ternary: 0,
-            Open_Subscript: 1,
-            Open_Method: 1,
-            VarPoint: 1,
-            Open_DynamicMethod: 1,//动态方法
-            Raw: {mode: 0, flags: ['modifier', 'tagattr', 'tpl']}, //打开修饰符
-            Modifiers: {mode: 0, flags: ['modifier', 'tagattr', 'tpl']}, //打开修饰符
-            Symbol: 0,        //支持比较符号等
-            SuffixSymbol: 0,  //尾部自增自减
-            VariableSymbol: 0,//支持赋值和比较
-            Comma: {mode: 0, flags: ['array', 'brackets', 'function', 'method', 'dymethod', 'modifier']},
-            Object_Comma: {mode: 0, flags: ['object']},
+            closeTplDelimiter: {mode: 0, flags: Rules.BOUND_TPL_STREXP},
+            closeTpl: {mode: 0, flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR | Rules.BOUND_TAG | Rules.BOUND_TPL},
+            closeTagAttr: {mode: 1, flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR},
+            closeArray: {mode: 0, flags: Rules.BOUND_ARRAY},//任何数值在数值之间都可以关闭
+            closeObject: {mode: 0, flags: Rules.BOUND_OBJECT},
+            closeParentheses: {mode: 0, flags: Rules.BOUND_PARENTHESES},
+            closeTernary: {mode: 0, flags: Rules.BOUND_TERNARY},
+            closeSubscript: {mode: 0, flags: Rules.BOUND_SUBSCRIPT},
+            closeFunction: {mode: 0, flags: Rules.BOUND_FUNCTION},
+            closeMethod: {mode: 0, flags: Rules.BOUND_METHOD}, //关闭方法
+            closeDynamicMethod: {mode: 0, flags: Rules.BOUND_DYMETHOD}, //关闭动态方法
+            openTernary: 0,
+            openSubscript: 1,
+            openMethod: 1,
+            varPoint: 1,
+            openDynamicMethod: 1,//动态方法
+            raw: {mode: 0, flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR | Rules.BOUND_TPL}, //打开修饰符
+            modifiers: {mode: 0, flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR | Rules.BOUND_TPL}, //打开修饰符
+            symbol: 0,        //支持比较符号等
+            suffixSymbol: 0,  //尾部自增自减
+            variableSymbol: 0,//支持赋值和比较
+            comma: {
+                mode: 0,
+                flags: Rules.BOUND_ARRAY | Rules.BOUND_PARENTHESES | Rules.BOUND_FUNCTION | Rules.BOUND_METHOD | Rules.BOUND_DYMETHOD | Rules.BOUND_MODIFIER
+            },
+            objectComma: {mode: 0, flags: Rules.BOUND_OBJECT},
         };
         //1 是数字和常量
         if (type == 3) {
-            delete data.Open_Subscript; //不支持下标
-            delete data.Open_Method;    //不支持方法
-            delete data.VarPoint;       //不支持点键名
-            delete data.SuffixSymbol;   //不支持尾部自增自减
-            delete data.VariableSymbol; //不支持赋值
-            delete data.Open_DynamicMethod;
+            delete data.openSubscript; //不支持下标
+            delete data.openMethod;    //不支持方法
+            delete data.varPoint;       //不支持点键名
+            delete data.suffixSymbol;   //不支持尾部自增自减
+            delete data.variableSymbol; //不支持赋值
+            delete data.openDynamicMethod;
         }
         //数组 对象 其他表达式等 不支持 赋值 等 支持下标
         else if (type == 2) {
-            delete data.SuffixSymbol;       //不支持尾部自增自减
-            delete data.VariableSymbol;     //不支持赋值和比较
-            delete data.Open_DynamicMethod; //不支持动态方法
+            delete data.suffixSymbol;       //不支持尾部自增自减
+            delete data.variableSymbol;     //不支持赋值和比较
+            delete data.openDynamicMethod; //不支持动态方法
         }
         else if (type == 1) {
-            delete data.SuffixSymbol;       //不支持尾部自增自减
-            delete data.VariableSymbol;     //不支持赋值和比较
+            delete data.suffixSymbol;       //不支持尾部自增自减
+            delete data.variableSymbol;     //不支持赋值和比较
         }
         //变量类型 剔除重复比较属性
         else {
-            delete data.Symbol; //Symbol 和 VariableSymbol 重复
+            delete data.symbol; //Symbol 和 VariableSymbol 重复
         }
         return data;
     };
 
     //初始化 寻找模板标记开始{
-    public static Init = {
-        next: {Open_Tpl: 1}
-    };
+    public static init() {
+        return {
+            next: {openTpl: 1}
+        };
+    }
+
     //配置 寻找配置标记 {#
-    public static Init_Config = {
-        next: {Open_Config: 1}
-    };
-    //打开配置文件标记
-    public static Open_Config = {
-        rule: /\{#/,
-        next: {ConfigKey: 0}
-    };
+    public static initConfig() {
+        return {
+            next: {openConfig: 1}
+        }
+    }
+
+    //打开配置标记
+    public static openConfig() {
+        return {
+            rule: new RegExp(SyntaxRules.delimiter.left + '#'),
+            next: {configKey: 0}
+        }
+    }
+
     //配置属性值
-    public static ConfigKey = {
-        rule: /\w+(?:\.\w+)*(?:\|raw)?/,
-        token: 'cfgkey',
-        next: {Close_Config: 0}
-    };
+    public static configKey() {
+        return {
+            rule: /\w+(?:\.\w+)*(?:\|raw)?/,
+            token: 'cfgkey',
+            next: {closeConfig: 0}
+        };
+    }
+
     //关闭标记
-    public static Close_Config = {
-        rule: /#\}/,
-        next: {Finish: 1}
-    };
+    public static closeConfig() {
+        return {
+            rule: new RegExp('#' + SyntaxRules.delimiter.right),
+            next: {finish: 1}
+        };
+    }
+
     //关闭标记
-    public static Close_Literal = {
-        next: {Finish: 1}
+    public static closeLiteral() {
+        return {
+            next: {
+                finish: 1
+            }
+        }
     };
+
     //打开模板标记
-    public static Open_Tpl = {
-        rule: /\{/,
-        next: {
-            Expression: Rules.Expression(),
-            Open_CodeTag: 1,
-            Open_Tag: 1,
-            EndTag: 1,
-        },
-        open: 'tpl', //进入模板环境
-    };
+    public static openTpl() {
+        let next = Object.assign(Rules.expression(0), {
+            openCodeTag: 1,
+            openTag: 1,
+            endTag: 1
+        });
+        return {
+            rule: new RegExp(SyntaxRules.delimiter.left),
+            next: next,
+            open: Rules.BOUND_TPL
+        };
+    }
+
     //解析标签
-    public static Open_Tag = {
-        rule: /(?:\w+:)?\w+\s+|(?:\w+:)?\w+(?=\})/,
-        token: 'tagname',
-        next: {
-            Close_Tpl: {mode: 0, flags: ['tag', 'tpl']},
-            Open_TagAttr: 6,
-            Single_TagAttr: 6,
-        },
-        open: 'tag',
-    };
+    public static openTag() {
+        return {
+            rule: new RegExp('(?:\\w+:)?\\w+\\s+|(?:\\w+:)?\\w+(?=' + SyntaxRules.delimiter.right + ')'),
+            token: 'tagname',
+            next: {
+                closeTpl: {mode: 0, flags: Rules.BOUND_TAG | Rules.BOUND_TPL},
+                openTagAttr: 6,
+                singleTagAttr: 6,
+            },
+            open: Rules.BOUND_TAG,
+        };
+
+    }
+
     //代码标签
-    public static Open_CodeTag = {
-        rule: /(?:if|else\s*if|while|assign|global|switch)\s+/,
-        token: 'tagcode',
-        next: Rules.Expression(),
-        open: 'tag',
-    };
+    public static openCodeTag() {
+        return {
+            rule: /(?:if|else\s*if|while|assign|global|switch)\s+/,
+            token: 'tagcode',
+            next: Rules.expression(0),
+            open: Rules.BOUND_TAG,
+        };
+    }
+
     //结束标签
-    public static EndTag = {
-        rule: /\/(?:\w+:)?\w+/,
-        token: 'tagend',
-        next: {
-            Close_Tpl: {mode: 0, flags: ['tpl']},
-        },
-    };
+    public static endTag() {
+        return {
+            rule: /\/(?:\w+:)?\w+/,
+            token: 'tagend',
+            next: {
+                closeTpl: {mode: 0, flags: Rules.BOUND_TPL},
+            },
+        };
+    }
+
     //标签属性
-    public static Open_TagAttr = {
-        rule: /@?\w+=/,
-        token: 'attr',
-        next: {
-            VarKeyWord: 0,
-            Expression: Rules.Expression(),
-        },
-        open: 'tagattr',
-    };
+    public static openTagAttr() {
+        let next = Object.assign({
+            varKeyWord: 0
+        }, Rules.expression(0));
+        return {
+            rule: /@?\w+=/,
+            token: 'attr',
+            next: next,
+            open: Rules.BOUND_TAG_ATTR,
+        };
+    }
+
     //简单标记属性
-    public static Single_TagAttr = {
-        rule: /\w+/,
-        token: 'attr',
-        next: {
-            Open_TagAttr: 6,
-            Single_TagAttr: 6,
-            Close_Tpl: 0,
-        },
-    };
+    public static singleTagAttr() {
+        return {
+            rule: /\w+/,
+            token: 'attr',
+            next: {
+                openTagAttr: 6,
+                singleTagAttr: 6,
+                closeTpl: 0,
+            },
+        };
+    }
+
     //关闭属性
-    public static Close_TagAttr = {
-        rule: /\s+/,
-        close: ['modifier', 'tagattr'],
-        token: 'empty',
-        next: {
-            Open_TagAttr: 6,
-            Single_TagAttr: 6,
-            Close_Tpl: {mode: 0, flags: ['tag', 'tpl']},
-        },
-    };
+    public static closeTagAttr() {
+        return {
+            rule: /\s+/,
+            close: Rules.BOUND_TAG_ATTR | Rules.BOUND_MODIFIER,
+            token: 'empty',
+            next: {
+                openTagAttr: 6,
+                singleTagAttr: 6,
+                closeTpl: {mode: 0, flags: Rules.BOUND_TAG | Rules.BOUND_TPL},
+            },
+        };
+    }
+
     //关闭模板
-    public static Close_Tpl = {
-        rule: /\}/,
-        token: 'closetpl',
-        next: {
-            Finish: 1,
-        },
-        close: ['modifier', 'tagattr', 'tpl'],
-    };
+    public static closeTpl() {
+        return {
+            rule: new RegExp(SyntaxRules.delimiter.right),
+            token: 'closetpl',
+            next: {
+                finish: 1,
+            },
+            close: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR | Rules.BOUND_TPL,
+        };
+    }
+
     /*数据类型*/
+
     //数字
-    public static Number = {
-        rule: /\d+\.\d+|\d+|\.\d+/,
-        token: 'code',
-        next: Rules.ExpreEnd(3),
-    };
+    public static number() {
+        return {
+            rule: /\d+\.\d+|\d+|\.\d+/,
+            token: 'code',
+            next: Rules.finishExpression(3),
+        };
+    }
 
     //字面定义量
-    public static VarKeyWord = {
-        rule: /\w+(?=(?:\s+|\}))/,
-        token: 'code',
-        next: Rules.ExpreEnd(3),
-    };
+    public static varKeyWord() {
+        return {
+            rule: new RegExp('\\w+(?=(?:\\s+|' + SyntaxRules.delimiter.right + '))'),
+            token: 'code',
+            next: Rules.finishExpression(3)
+        };
+    }
+
     //变量
-    public static Variable = {
-        rule: /\$\w+/,
-        token: 'var',
-        next: Rules.ExpreEnd(),
-    };
+    public static variable() {
+        return {
+            rule: /\$\w+/,
+            token: 'var',
+            next: Rules.finishExpression(),
+        };
+    }
+
     //字符串
-    public static String = {
-        rule: /'[^'\\]*(?:\\.[^'\\]*)*'|"[^"\\]*(?:\\.[^"\\]*)*"/,
-        token: 'string',
-        next: Rules.ExpreEnd(2),
-    };
+    public static string() {
+        return {
+            rule: /'[^'\\]*(?:\\.[^'\\]*)*'|"[^"\\]*(?:\\.[^"\\]*)*"/,
+            token: 'string',
+            next: Rules.finishExpression(2),
+        };
+    }
 
     //打开模板字符串
-    public static Open_TplString = {
-        rule: /`/,
-        token: 'string_open',
-        next: {
-            Close_TplString: 1,
-            Open_TplDelimiter: 1,
-            TplString: 1,
-        },
-        open: 'tpl_string'
-    };
-    //模板字符串
-    public static TplString = {
-        rule: /[^`\{\\]*(?:\\.[^`\{\\]*)*/,
-        token: 'tpl_string',
-        next: {
-            Open_TplDelimiter: 1,
-            Close_TplString: 1,
-        },
-    };
-    //关闭模板字符
-    public static Close_TplString = {
-        rule: /`/,
-        token: 'string_close',
-        next: Rules.ExpreEnd(2),
-        close: 'tpl_string',
-    };
-    //打开模板字符串内的表达式
-    public static Open_TplDelimiter = {
-        rule: /\{/,
-        token: 'delimi_open',
-        next: Rules.Expression(),
-        open: 'tplexp'
-    };
-    //关闭模板字符串的表达式
-    public static Close_TplDelimiter = {
-        rule: /\}/,
-        token: 'delimi_close',
-        next: {
-            Open_TplDelimiter: {mode: 1, flags: ['tpl_string']},
-            Close_TplString: {mode: 1, flags: ['tpl_string']},
-            TplString: 1,
-        },
-        close: 'tplexp'
+    public static openTplString() {
+        return {
+            rule: /`/,
+            token: 'string_open',
+            next: {
+                closeTplString: 1,
+                openTplDelimiter: 1,
+                tplString: 1,
+            },
+            open: Rules.BOUND_TPL_STRING
+        };
     }
+
+    //模板字符串
+    public static tplString() {
+        return {
+            rule: /[^`\{\\]*(?:\\.[^`\{\\]*)*/,
+            token: 'tpl_string',
+            next: {
+                openTplDelimiter: 1,
+                closeTplString: 1,
+            },
+        };
+    }
+
+    //关闭模板字符
+    public static closeTplString() {
+        return {
+            rule: /`/,
+            token: 'string_close',
+            next: Rules.finishExpression(2),
+            close: Rules.BOUND_TPL_STRING
+        };
+    }
+
+    //打开模板字符串内的表达式
+    public static openTplDelimiter() {
+        return {
+            rule: /\{/,
+            token: 'delimi_open',
+            next: Rules.expression(0),
+            open: Rules.BOUND_TPL_STREXP
+        };
+    }
+
+
+    //关闭模板字符串的表达式
+    public static closeTplDelimiter() {
+        return {
+            rule: /\}/,
+            token: 'delimi_close',
+            next: {
+                openTplDelimiter: {mode: 1, flags: Rules.BOUND_TPL_STRING},
+                closeTplString: {mode: 1, flags: Rules.BOUND_TPL_STRING},
+                tplString: 1,
+            },
+            close: Rules.BOUND_TPL_STREXP
+        };
+    }
+
     //关键字 暂时先这3个
-    public static KeyWord = {
-        rule: /false|true|null|void\s+0]/,
-        token: 'code',
-        next: Rules.ExpreEnd(3),
-    };
+    public static keyWord() {
+        return {
+            rule: /false|true|null|void\s+0]/,
+            token: 'code',
+            next: Rules.finishExpression(3)
+        };
+    }
+
     //点键名
-    public static VarPoint = {
-        rule: /\.\w+/,
-        token: 'varkey',
-        next: Rules.ExpreEnd(),
-    };
+    public static varPoint() {
+        return {
+            rule: /\.\w+/,
+            token: 'varkey',
+            next: Rules.finishExpression()
+        };
+    }
+
     //逗号
-    public static Comma = {
-        rule: /,/,
-        token: 'code',
-        next: Rules.Expression(),
-    };
-    //冒号
-    public static Colons = {
-        rule: /:/,
-        token: 'code',
-        next: Rules.Expression(),
-    };
-    //逗号 对象分割逗号
-    public static Object_Comma = {
-        rule: /,/,
-        token: 'code',
-        next: {
-            Object_Key: {mode: 0, flags: ['object']},
-        },
-    };
-    //取非运算
-    public static Not = {
-        rule: /\!+/,
-        token: 'code',
-        next: Rules.Expression(),
-    };
-    //前置++ --
-    public static PrefixSymbol = {
-        rule: /\+(?!\+)|\-(?!\-)/,
-        token: 'code',
-        next: Rules.Expression(true),
-    };
-    //仅变量
-    public static PrefixVarSymbol = {
-        rule: /\+\+|\-\-/,
-        token: 'code',
-        next: {
-            Variable: 0,
-        },
-    };
-    //后置 ++ --
-    public static SuffixSymbol = {
-        rule: /\+\+|\-\-/,
-        token: 'code',
-        next: Rules.ExpreEnd(3),
-    };
-    //比较运算符号 常量可在前面
-    public static Symbol = {
-        rule: /===|!==|==|!=|>=|<=|\+|-|\*|\/|%|&&|\|\||>|</,
-        token: 'code',
-        next: Rules.Expression(),
-    };
-    //符号 变量可以在前面
-    public static VariableSymbol = {
-        rule: /===|!==|==|!=|>=|<=|=|\+=|-=|\*=|\/=|%=|\+|-|\*|\/|%|&&|\|\||>|</,
-        token: 'code',
-        next: Rules.Expression(),
-    };
-    //打开数组
-    public static Open_Array = {
-        rule: /\[/,
-        token: 'code',
-        next: {
-            Expression: Rules.Expression(),
-            Close_Array: {mode: 0, flags: ['array']},//空数组可直接关闭
-        },
-        open: 'array'
-    };
-    //关闭数组
-    public static Close_Array = {
-        rule: /\]/,
-        token: 'code',
-        next: Rules.ExpreEnd(2),
-        close: 'array'
-    };
-    //打开对象
-    public static Open_Object = {
-        rule: /\{/,
-        token: 'code',
-        next: {
-            Object_Key: 0,
-            Close_Object: {mode: 0, flags: ['object']},
-        },
-        open: 'object'
-    };
-    //对象键名
-    public static Object_Key = {
-        rule: /\d+\s*\:|\w+\s*\:|'[^'\\]*(?:\\.[^'\\]*)*'\s*\:|"[^"\\]*(?:\\.[^"\\]*)*"\s*\:/,
-        token: 'objkey',
-        next: Rules.Expression(),
-    };
-    //关闭对象
-    public static Close_Object = {
-        rule: /\}/,
-        token: 'code',
-        next: Rules.ExpreEnd(2),
-        close: 'object',
-    };
-    //打开数组对象下标
-    public static Open_Subscript = {
-        rule: /\[/,
-        token: 'code',
-        next: Rules.Expression(),
-        open: 'subscript',
-    };
-    //关闭数组对象下标
-    public static Close_Subscript = {
-        rule: /\]/,
-        token: 'code',
-        next: Rules.ExpreEnd(1),
-        close: 'subscript',
-    };
-    //打开括号
-    public static Open_Brackets = {
-        rule: /\(/,
-        token: 'code',
-        next: Rules.Expression(),
-        open: 'brackets',
-    };
-    //关闭括号
-    public static Close_Brackets = {
-        rule: /\)/,
-        token: 'code',
-        next: Rules.ExpreEnd(),
-        close: 'brackets',
-    };
+    public static comma() {
+        return {
+            rule: /,/,
+            token: 'code',
+            next: Rules.expression()
+        };
+    }
 
-    //打开三元表达式
-    public static Open_Ternary = {
-        rule: /\?/,
-        token: 'code',
-        next: Rules.Expression(),
-        open: 'ternary',
-    };
-    //关闭三元表达式
-    public static Close_Ternary = {
-        rule: /\:/,
-        token: 'code',
-        next: Rules.Expression(),
-        close: 'ternary',
-    };
+//冒号
+    public static colons() {
+        return {
+            rule: /:/,
+            token: 'code',
+            next: Rules.expression(),
+        };
+    }
 
-    //打开内置函数
-    public static Open_Function = {
-        rule: /\w+(?:\.\w+)*\(|new\s+\w+(?:\.\w+)*\(/,
-        token: 'func',
-        next: {
-            Expression: Rules.Expression(),
-            Close_Function: {mode: 0, flags: ['function']},
-        },
-        open: 'function',
-    };
-    //关闭函数
-    public static Close_Function = {
-        rule: /\)/,
-        token: 'func',
-        next: Rules.ExpreEnd(1),
-        close: 'function',
-    };
+//逗号 对象分割逗号
+    public static objectComma() {
+        return {
+            rule: /,/,
+            token: 'code',
+            next: {
+                objectKey: {mode: 0, flags: Rules.BOUND_OBJECT},
+            },
+        };
+    }
 
-    //方法打开
-    public static Open_Method = {
-        rule: /\.\w+\(/,
-        token: 'method',
-        next: {
-            Expression: Rules.Expression(),
-            Close_Method: {mode: 0, flags: ['method']},
-        },
-        open: 'method',
-    };
-    //关闭方法
-    public static Close_Method = {
-        rule: /\)/,
-        token: 'method',
-        next: Rules.ExpreEnd(1),
-        close: 'method',
-    };
-    //打开动态方法
-    public static Open_DynamicMethod = {
-        rule: /\(/,
-        token: 'dymethod',
-        next: {
-            Expression: Rules.Expression(),
-            Close_DynamicMethod: {mode: 0, flags: ['dymethod']},
-        },
-        open: 'dymethod',
-    };
-    //关闭动态方法
-    public static Close_DynamicMethod = {
-        rule: /\)/,
-        token: 'dymethod',
-        next: Rules.ExpreEnd(1),
-        close: 'dymethod',
-    };
-    //修饰符 只有结束标记可以关闭它
-    public static Modifiers = {
-        rule: /\|\w+/,
-        token: 'modifier',
-        next: {
-            Colons: 0,
-            Modifiers: 0,
-            Close_Tpl: {mode: 0, flags: ['modifier', 'tagattr', 'tag', 'tpl']},
-            Close_TagAttr: {mode: 1, flags: ['modifier', 'tagattr']},
-        },
-        open: 'modifier',
-    };
-    //不编码输出
-    public static Raw = {
-        rule: /\|raw\s*(?=\})/,
-        token: 'raw',
-        next: {
-            Close_Tpl: {mode: 0, flags: ['modifier', 'tagattr', 'tag', 'tpl']},
-        },
-    };
+//取非运算
+    public static not() {
+        return {
+            rule: /\!+/,
+            token: 'code',
+            next: Rules.expression()
+        };
+    }
+
+//前置++ --
+    public static prefixSymbol() {
+        return {
+            rule: /\+(?!\+)|\-(?!\-)/,
+            token: 'code',
+            next: Rules.expression(1),
+        };
+    }
+
+//仅变量
+    public static prefixVarSymbol() {
+        return {
+            rule: /\+\+|\-\-/,
+            token: 'code',
+            next: {
+                variable: 0,
+            },
+        };
+    }
+
+//后置 ++ --
+    public static suffixSymbol() {
+        return {
+            rule: /\+\+|\-\-/,
+            token: 'code',
+            next: Rules.finishExpression(3),
+        };
+    }
+
+//比较运算符号 常量可在前面
+    public static symbol() {
+        return {
+            rule: /===|!==|==|!=|>=|<=|\+|-|\*|\/|%|&&|\|\||>|</,
+            token: 'code',
+            next: Rules.expression(),
+        };
+    }
+
+//符号 变量可以在前面
+    public static variableSymbol() {
+        return {
+            rule: /===|!==|==|!=|>=|<=|=|\+=|-=|\*=|\/=|%=|\+|-|\*|\/|%|&&|\|\||>|</,
+            token: 'code',
+            next: Rules.expression(),
+        };
+    }
+
+//打开数组
+    public static openArray() {
+        return {
+            rule: /\[/,
+            token: 'code',
+            next: Object.assign(Rules.expression(), {
+                closeArray: {mode: 0, flags: Rules.BOUND_ARRAY}
+            }),
+            open: Rules.BOUND_ARRAY
+        };
+    }
+
+//关闭数组
+    public static closeArray() {
+        return {
+            rule: /\]/,
+            token: 'code',
+            next: Rules.finishExpression(2),
+            close: Rules.BOUND_ARRAY
+        };
+    }
+
+//打开对象
+    public static openObject() {
+        return {
+            rule: /\{/,
+            token: 'code',
+            next: {
+                objectKey: 0,
+                closeObject: {mode: 0, flags: Rules.BOUND_OBJECT},
+            },
+            open: Rules.BOUND_OBJECT
+        };
+    }
+
+//对象键名
+    public static objectKey() {
+        return {
+            rule: /\d+\s*\:|\w+\s*\:|'[^'\\]*(?:\\.[^'\\]*)*'\s*\:|"[^"\\]*(?:\\.[^"\\]*)*"\s*\:/,
+            token: 'objkey',
+            next: Rules.expression(),
+        };
+    }
+
+//关闭对象
+    public static closeObject() {
+        return {
+            rule: /\}/,
+            token: 'code',
+            next: Rules.finishExpression(2),
+            close: Rules.BOUND_OBJECT,
+        };
+    }
+
+//打开数组对象下标
+    public static openSubscript() {
+        return {
+            rule: /\[/,
+            token: 'code',
+            next: Rules.expression(),
+            open: Rules.BOUND_SUBSCRIPT,
+        };
+    }
+
+//关闭数组对象下标
+    public static closeSubscript() {
+        return {
+            rule: /\]/,
+            token: 'code',
+            next: Rules.finishExpression(1),
+            close: Rules.BOUND_SUBSCRIPT,
+        };
+    }
+
+//打开括号
+    public static openParentheses() {
+        return {
+            rule: /\(/,
+            token: 'code',
+            next: Rules.expression(),
+            open: Rules.BOUND_PARENTHESES,
+        };
+    }
+
+//关闭括号
+    public static closeParentheses() {
+        return {
+            rule: /\)/,
+            token: 'code',
+            next: Rules.finishExpression(),
+            close: Rules.BOUND_PARENTHESES,
+        };
+    }
+
+//打开三元表达式
+    public static openTernary() {
+        return {
+            rule: /\?/,
+            token: 'code',
+            next: Rules.expression(),
+            open: Rules.BOUND_TERNARY,
+        };
+    }
+
+//关闭三元表达式
+    public static closeTernary() {
+        return {
+            rule: /\:/,
+            token: 'code',
+            next: Rules.expression(),
+            close: Rules.BOUND_TERNARY,
+        };
+    }
+
+//打开内置函数
+    public static openFunction() {
+        return {
+            rule: /\w+(?:\.\w+)*\(|new\s+\w+(?:\.\w+)*\(/,
+            token: 'func',
+            next: Object.assign(Rules.expression(), {
+                closeFunction: {mode: 0, flags: Rules.BOUND_FUNCTION},
+            }),
+            open: Rules.BOUND_FUNCTION,
+        };
+    }
+
+//关闭函数
+    public static closeFunction() {
+        return {
+            rule: /\)/,
+            token: 'func',
+            next: Rules.finishExpression(1),
+            close: Rules.BOUND_FUNCTION,
+        };
+    }
+
+//方法打开
+    public static openMethod() {
+        return {
+            rule: /\.\w+\(/,
+            token: 'method',
+            next: Object.assign(Rules.expression(), {
+                closeMethod: {mode: 0, flags: Rules.BOUND_METHOD},
+            }),
+            open: Rules.BOUND_METHOD,
+        };
+    }
+
+//关闭方法
+    public static closeMethod() {
+        return {
+            rule: /\)/,
+            token: 'method',
+            next: Rules.finishExpression(1),
+            close: Rules.BOUND_METHOD,
+        };
+    }
+
+//打开动态方法
+    public static openDynamicMethod() {
+        return {
+            rule: /\(/,
+            token: 'dymethod',
+            next: Object.assign(Rules.expression(), {
+                closeDynamicMethod: {mode: 0, flags: Rules.BOUND_DYMETHOD},
+            }),
+            open: Rules.BOUND_DYMETHOD,
+        };
+    }
+
+//关闭动态方法
+    public static closeDynamicMethod() {
+        return {
+            rule: /\)/,
+            token: 'dymethod',
+            next: Rules.finishExpression(1),
+            close: Rules.BOUND_DYMETHOD,
+        };
+    }
+
+//修饰符 只有结束标记可以关闭它
+    public static modifiers() {
+        return {
+            rule: /\|\w+/,
+            token: 'modifier',
+            next: {
+                colons: 0,
+                modifiers: 0,
+                closeTpl: {
+                    mode: 0,
+                    flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR | Rules.BOUND_TAG | Rules.BOUND_TPL
+                },
+                closeTagAttr: {mode: 1, flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR},
+            },
+            open: Rules.BOUND_MODIFIER,
+        };
+    }
+
+//不编码输出
+    public static raw() {
+        return {
+            rule: new RegExp('\\|raw\\s*(?=' + SyntaxRules.delimiter.right + ')'),
+            token: 'raw',
+            next: {
+                closeTpl: {
+                    mode: 0,
+                    flags: Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR | Rules.BOUND_TAG | Rules.BOUND_TPL
+                },
+            },
+        };
+    }
 
 }
+
 export class SyntaxRules {
 
-    private static delimiter = {left: '\\{', right: '\\}'};
+    public static delimiter = {left: '\\{', right: '\\}'};
 
     public static getRule(tag) {
         if (!Rules[tag]) {
-            //console.error('getRule:', tag);
+            //   console.error('getRule:', tag);
             return null;
         }
-        return Rules[tag].rule;
+        return Rules[tag]().rule;
     }
 
-    public static  getToken(tag) {
+    public static getToken(tag) {
         if (!Rules[tag]) {
-            //console.error('getToken:', tag);
+            // console.error('getToken:', tag);
             return null;
         }
-        return Rules[tag].token || '';
+        return Rules[tag]().token || '';
     }
 
-    public static  getNext(tag) {
+    public static getNext(tag) {
         if (!Rules[tag]) {
-            //console.error('getNext:', tag);
+            //  console.error('getNext:', tag);
             return null;
         }
-        return Rules[tag].next || null;
+        return Rules[tag]().next || null;
     }
 
-    public static  getClose(tag) {
+    public static getClose(tag) {
         if (!Rules[tag]) {
-            //console.error('getClose:', tag);
+            //  console.error('getClose:', tag);
             return null;
         }
-        if (Rules[tag].close instanceof Array) {
-            return Rules[tag].close;
-        } else if (typeof(Rules[tag].close) === 'string') {
-            return [Rules[tag].close];
-        }
-        return null;
+        return Rules[tag]().close || null;
     }
 
-    public static  getOpen(tag) {
+    public static getOpen(tag) {
         if (!Rules[tag]) {
-            //console.error('getOpen:', tag);
+            //  console.error('getOpen:', tag);
             return null;
         }
-        return Rules[tag].open || null;
+        return Rules[tag]().open || null;
     }
 
     public static reset(left, right) {
-        if (SyntaxRules.delimiter.left == left && SyntaxRules.delimiter.right == right) {
-            return;
-        }
-        Rules.Open_Tpl.rule = new RegExp(left);
-        Rules.Open_Config.rule = new RegExp(left + '#');
-        Rules.Close_Tpl.rule = new RegExp(right);
-        Rules.Close_Config.rule = new RegExp('#' + right);
-        Rules.Open_Tag.rule = new RegExp('(?:\\w+:)?\\w+\\s+|(?:\\w+:)?\\w+(?=' + right + ')');
-        Rules.Raw.rule = new RegExp('\\|raw\\s*(?=' + right + ')');
-        Rules.VarKeyWord.rule = new RegExp('\\w+(?=(?:\\s+|' + right + '))');
         SyntaxRules.delimiter.left = left;
         SyntaxRules.delimiter.right = right;
     }

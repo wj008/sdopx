@@ -2,10 +2,11 @@
  * Created by wj008 on 16-6-5.
  */
 
-import { SyntaxRules } from './syntaxrules';
-import { Source }  from './source';
-import { TreeMap }  from './tree_map';
+import {SyntaxRules, Rules} from './syntaxrules';
+import {Source} from './source';
+import {TreeMap} from './tree_map';
 import {Sdopx} from "../sdopx";
+
 
 /**
  * 词法分词器
@@ -13,9 +14,10 @@ import {Sdopx} from "../sdopx";
 
 export class Lexer {
     //数据源
-    private source:Source;
+    private source: Source;
     //规则集合
     private regexp = [];
+    //
     private maps = [];
     //标记栈
     private stack = [];
@@ -75,7 +77,7 @@ export class Lexer {
         ret.shift();
         let idx = -1;
         //值
-        let [val='']=ret.filter(function (item, index) {
+        let [val = ''] = ret.filter(function (item, index) {
             if (typeof(item) !== 'undefined') {
                 if (idx < 0) {
                     idx = index;
@@ -94,20 +96,11 @@ export class Lexer {
     private analysis(tagname, rules) {
         //console.log(tagname,rules);
         let mode = typeof(rules) == 'number' ? rules : rules.mode;
-        let endtags = typeof(rules) == 'number' ? null : rules.flags;
-        if (endtags) {
+        let flags = typeof(rules) == 'number' ? null : rules.flags;
+        if (flags) {
             let end = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
-            if (end !== null) {
-                if (endtags.constructor == Array) {
-                    if (endtags.indexOf(end) < 0) {
-                        return;
-                    }
-                }
-                else if (typeof(endtags) === 'string') {
-                    if (end != endtags) {
-                        return;
-                    }
-                }
+            if (end !== null && (flags & end) == 0) {
+                return;
             }
         }
         let exp = SyntaxRules.getRule(tagname);
@@ -139,15 +132,9 @@ export class Lexer {
     private initNext(next) {
         this.regexp = [];
         this.maps = [];
-        // console.log('Next',next);
+        // console.log('Next', next);
         if (next) {
             for (let tagname in next) {
-                if (tagname === 'Expression' || tagname === 'ExpreEnd') {
-                    for (let tag in next[tagname]) {
-                        this.analysis(tag, next[tagname][tag]);
-                    }
-                    continue;
-                }
                 this.analysis(tagname, next[tagname]);
             }
 
@@ -173,14 +160,14 @@ export class Lexer {
             // console.warn('解析错误：', {map: this.maps, regexp: regexp, retinfo: retinfo, content: content});
             return null;
         }
-        let {tag=null,mode=null}=this.maps[retinfo.idx];
+        let {tag = null, mode = null} = this.maps[retinfo.idx];
         if (mode === null || tag === null) {
             //console.warn('解析MAP错误：', {map: this.maps, regexp: regexp, retinfo: retinfo, content: content});
             return null;
         }
         // console.log('命中：', tag, mode, {map: this.maps, regexp: regexp, retinfo: retinfo, content: content});
         // console.warn('命中：', tag, mode);
-        let {end, start, val, len}=retinfo;
+        let {end, start, val, len} = retinfo;
         switch (mode) {
             //找接受符号 不包括结束符号
             case 2:
@@ -217,7 +204,7 @@ export class Lexer {
         if (Sdopx.debug) {
             tree.setInfo(this.getSourceInfo());
         }
-        let tag = 'Init';
+        let tag = 'init';
         do {
             let next = SyntaxRules.getNext(tag);
             this.initNext(next);
@@ -228,7 +215,7 @@ export class Lexer {
             }
             tag = data.tag;
             source.cursor = data.end;
-            if (tag === 'Close_Tpl') {
+            if (tag === 'closeTpl') {
                 // console.error('栈数据：', this.stack);
                 data.node = 'html';
                 tree.push(data);
@@ -236,31 +223,33 @@ export class Lexer {
             }
             //存栈
             let open = SyntaxRules.getOpen(tag);
+
             if (open !== null) {
                 //打开是时候清理
-                if (open == 'tagattr') {
-                    let endtag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
-                    while (endtag && ['modifier', 'tagattr'].indexOf(endtag) >= 0) {
+                if (open == Rules.BOUND_TAG_ATTR) {
+                    let endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
+                    while (endflag && ((Rules.BOUND_MODIFIER | Rules.BOUND_TAG_ATTR) & endflag) > 0) {
                         this.stack.pop();
-                        endtag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
+                        endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
                     }
                 }
-                if (open == 'modifier') {
-                    let endtag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
-                    while (endtag && 'modifier' == endtag) {
+                if (open == Rules.BOUND_MODIFIER) {
+                    let endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
+                    while (endflag && (Rules.BOUND_MODIFIER & endflag) > 0) {
                         this.stack.pop();
-                        endtag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
+                        endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
                     }
                 }
                 this.stack.push(open);
                 // console.error('===栈数据===：', this.stack);
             }
+
             //离栈
             let close = SyntaxRules.getClose(tag);
             if (close !== null) {
-                let endtag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
-                if (close.indexOf(endtag) < 0) {
-                    this.addError(`Syntax Error:Error parsing template, the appropriate tag end region not found，tag:'${endtag}'`, source.cursor);
+                let endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
+                if ((close & endflag) == 0) {
+                    this.addError(`Syntax Error:Error parsing template, the appropriate tag end region not found`, source.cursor);
                     return null;
                 }
                 this.stack.pop();
@@ -289,15 +278,13 @@ export class Lexer {
             if (ret2 && (!ret || ret2.start <= ret.start)) {
                 let code = source.content.substring(source.cursor, ret2.start);
                 source.cursor = ret2.end;//是开始还是结束
-                return {map: '', code: code, next: 'Close_Literal'};
+                return {map: '', code: code, next: 'closeLiteral'};
             }
         }
-
         //到尾部都没找到模板
         if (!ret) {
-            return {map: '', code: source.content.substring(source.cursor, source.bound), next: 'Finish'};
+            return {map: '', code: source.content.substring(source.cursor, source.bound), next: 'finish'};
         }
-
         let code = source.content.substring(source.cursor, ret.start);
         source.cursor = ret.start;
         let next = null;
@@ -305,13 +292,13 @@ export class Lexer {
             let char = source.content.substr(ret.end, 1);
             switch (char) {
                 case '#':
-                    next = 'Init_Config';
+                    next = 'initConfig';
                     break;
                 case '*':
-                    next = 'Init_Comment';
+                    next = 'initComment';
                     break;
                 default:
-                    next = 'Init';
+                    next = 'init';
             }
         }
         return {map: '', code: code, next: next};
@@ -359,7 +346,7 @@ export class Lexer {
         if (Sdopx.debug) {
             tree.setInfo(this.getSourceInfo());
         }
-        let tag = 'Init_Config';
+        let tag = 'initConfig';
         do {
             let next = SyntaxRules.getNext(tag);
             this.initNext(next);
@@ -371,7 +358,7 @@ export class Lexer {
             tag = data.tag;
             source.cursor = data.end;
             data.node = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
-            if (tag === 'Close_Config') {
+            if (tag === 'closeConfig') {
                 tree.push(data);
                 return tree;
             }
