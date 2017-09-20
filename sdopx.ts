@@ -3,10 +3,13 @@ import {Resource} from "./lib/resource";
 import {Template} from "./lib/template";
 import fs =require('fs');
 import crypto=require('crypto');
+
+
 export class SdopxError extends Error {
     public type = 'SdopxError';
     public path = '';
 }
+
 export class Sdopx extends Template {
 
     public static version = (function () {
@@ -53,7 +56,7 @@ export class Sdopx extends Template {
     public left_delimiter;
     public right_delimiter;
 
-    public funcMap: {[p: string]: Function} = {};
+    public funcMap: { [p: string]: Function } = {};
 
     public constructor(context = null) {
         super();
@@ -250,7 +253,7 @@ export class Sdopx extends Template {
         if (lineno == null || tplname == null) {
             throw err;
         }
-        let {type, name}=Resource.parseResourceName(tplname);
+        let {type, name} = Resource.parseResourceName(tplname);
         let resource = Resource.getResource(type);
         if (!resource) {
             err.path = tplname;
@@ -258,7 +261,7 @@ export class Sdopx extends Template {
                 + lineno + "\n\n" + err.stack;
             throw err;
         }
-        let {content = '', timestamp = 0, filepath = tplname} =resource.fetch(name, this.sdopx);
+        let {content = '', timestamp = 0, filepath = tplname} = resource.fetch(name, this.sdopx);
         var lines = content.split('\n')
             , start = Math.max(lineno - 3, 0)
             , end = Math.min(lines.length, lineno + 3);
@@ -281,4 +284,5 @@ export class Sdopx extends Template {
         this.rethrow(err, lineno, tplname);
     }
 }
+
 require("./lib/plugins");

@@ -3,12 +3,13 @@
     "module": "commonjs",
     "target": "es5",
     "outDir": "./push",
-    "lib": [
-      "dom",
-      "es6"
-    ],
+    "declaration": true,
     "types": [
       "node"
+    ],
+    "lib": [
+      "es2016",
+      "es2015"
     ],
     "sourceMap": false
   },

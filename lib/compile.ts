@@ -3,8 +3,7 @@ import {Parser} from "./parser";
 import {Sdopx} from "../sdopx";
 import {Template} from "./template";
 
-
-class Varter {
+export class Varter {
 
     public prefix = 'var';
     public data = {};
