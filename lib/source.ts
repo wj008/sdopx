@@ -1,4 +1,4 @@
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 import fs = require('fs');
 import path = require('path');
 import utils = require('./utils');

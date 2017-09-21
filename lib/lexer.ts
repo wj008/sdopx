@@ -5,7 +5,7 @@
 import {SyntaxRules, Rules} from './syntaxrules';
 import {Source} from './source';
 import {TreeMap} from './tree_map';
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 
 
 /**

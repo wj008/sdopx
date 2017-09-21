@@ -1,6 +1,6 @@
 import {Compile} from "./compile";
 import {Lexer} from "./lexer";
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 import {Source} from "./source";
 import {Rules} from './syntaxrules';
 

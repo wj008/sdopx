@@ -1,6 +1,6 @@
 import {Source} from "./source";
 import {Parser} from "./parser";
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 import {Template} from "./template";
 
 export class Varter {
@@ -91,7 +91,7 @@ export class Compile {
                     return false;
                 }
                 if (Sdopx.debug) {
-                    output.push('__line=' + tpl_item.info.line + ',__src=' + JSON.stringify(tpl_item.info.srcname) + ';');
+                    output.push('__line=' + tpl_item.info.line + ';__src=' + JSON.stringify(tpl_item.info.srcname) + ';');
                 }
                 switch (tpl_item.map) {
                     case Parser.CODE_EXPRESS:
@@ -147,7 +147,7 @@ export class Compile {
                     return false;
                 }
                 if (Sdopx.debug) {
-                    output.push('__line=' + cfgitem.info.line + ',__src=' + JSON.stringify(cfgitem.info.srcname) + ';');
+                    output.push('__line=' + cfgitem.info.line + ';__src=' + JSON.stringify(cfgitem.info.srcname) + ';');
                 }
                 if (cfgitem.raw) {
                     output.push('__raw(' + cfgitem.code + ');');

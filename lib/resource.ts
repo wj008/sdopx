@@ -1,5 +1,5 @@
 import {Template} from "./template";
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 import {Source} from "./source";
 import fs = require('fs');
 import path = require('path');

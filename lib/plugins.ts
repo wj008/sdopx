@@ -1,4 +1,4 @@
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 
 Sdopx.registerModifier('upper', function (str) {
     return String(str).toUpperCase();

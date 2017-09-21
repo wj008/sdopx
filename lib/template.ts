@@ -1,4 +1,4 @@
-import {Sdopx} from "../sdopx";
+import {Sdopx} from "../index";
 import {Resource} from "./resource";
 import {Source} from "./source";
 import {Compile} from "./compile";
