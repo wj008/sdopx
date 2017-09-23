@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var lexer_1 = require("./lexer");
-var sdopx_1 = require("../sdopx");
+var index_1 = require("../index");
 var syntaxrules_1 = require("./syntaxrules");
 var Parser = (function () {
     function Parser(sdopx, compile, source) {
@@ -63,7 +63,7 @@ var Parser = (function () {
             var exp = this.pars_express();
             if (!exp) {
                 if (this.lexData.testNext('closeTpl', false)) {
-                    if (sdopx_1.Sdopx.debug) {
+                    if (index_1.Sdopx.debug) {
                         ret.info = tree.getInfo();
                     }
                     return ret;
@@ -86,7 +86,7 @@ var Parser = (function () {
                 ret.map = Parser.CODE_ASSIGN;
             }
         }
-        if (sdopx_1.Sdopx.debug) {
+        if (index_1.Sdopx.debug) {
             ret.info = tree.getInfo();
         }
         return ret;
@@ -123,7 +123,7 @@ var Parser = (function () {
         else {
             temp.code = '$_sdopx._config[\'' + code + '\']';
         }
-        if (sdopx_1.Sdopx.debug) {
+        if (index_1.Sdopx.debug) {
             temp['info'] = tree.getInfo();
         }
         return temp;
@@ -279,10 +279,10 @@ var Parser = (function () {
         };
         var mt = temp.code.match(/(\w+)\(/);
         if (mt) {
-            var name_1 = mt[1];
-            var callback = this.sdopx._Sdopx.Functions[name_1] || null;
+            var name = mt[1];
+            var callback = this.sdopx._Sdopx.Functions[name] || null;
             if (typeof (callback) == 'function') {
-                temp.code = '__Sdopx.Functions[' + JSON.stringify(name_1) + '](';
+                temp.code = '__Sdopx.Functions[' + JSON.stringify(name) + '](';
             }
         }
         return temp;
@@ -441,12 +441,12 @@ var Parser = (function () {
                 if (!ret) {
                     return null;
                 }
-                var name_2 = ret.name.replace(/(^\s+|\s+$)/g, '');
+                var name = ret.name.replace(/(^\s+|\s+$)/g, '');
                 var exp = this.pars_express();
                 if (!exp) {
                     return null;
                 }
-                temp.args[name_2] = exp.code;
+                temp.args[name] = exp.code;
                 continue;
             }
             else if (item_1.tag == 'singleTagAttr') {
@@ -454,8 +454,8 @@ var Parser = (function () {
                 if (!ret) {
                     return null;
                 }
-                var name_3 = ret.name.replace(/(^\s+|\s+$)/g, '');
-                temp.args[name_3] = 'true';
+                var name = ret.name.replace(/(^\s+|\s+$)/g, '');
+                temp.args[name] = 'true';
                 continue;
             }
             else {
@@ -548,13 +548,13 @@ var Parser = (function () {
                 if (!ret) {
                     return null;
                 }
-                var name_4 = ret.name;
+                var name = ret.name;
                 var exp = this.pars_express();
                 // let value = this.pars_express_item(false);
                 if (!exp) {
                     return null;
                 }
-                temp.args[name_4] = exp.code;
+                temp.args[name] = exp.code;
                 continue;
             }
             else if (item_2.map == 'singleTagAttr') {
@@ -562,8 +562,8 @@ var Parser = (function () {
                 if (!ret) {
                     return null;
                 }
-                var name_5 = ret.name;
-                temp.args[name_5] = 'true';
+                var name = ret.name;
+                temp.args[name] = 'true';
                 continue;
             }
         }
@@ -666,3 +666,4 @@ var Parser = (function () {
     return Parser;
 }());
 exports.Parser = Parser;
+//# sourceMappingURL=parser.js.map

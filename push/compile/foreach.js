@@ -70,3 +70,4 @@ compile_1.Compile.registerCompile('foreach_close', function (name, compile) {
     output.push('}');
     return output.join('\n');
 });
+//# sourceMappingURL=foreach.js.map

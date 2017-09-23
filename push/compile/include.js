@@ -40,3 +40,4 @@ compile_1.Compile.registerCompile('include', function (name, args, compile) {
     output.push(';');
     return output.join('');
 });
+//# sourceMappingURL=include.js.map

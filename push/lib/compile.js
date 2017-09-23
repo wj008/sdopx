@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var parser_1 = require("./parser");
-var sdopx_1 = require("../sdopx");
+var index_1 = require("../index");
 var Varter = (function () {
     function Varter(prefix) {
         this.prefix = 'var';
@@ -13,6 +13,7 @@ var Varter = (function () {
     };
     return Varter;
 }());
+exports.Varter = Varter;
 var Compile = (function () {
     function Compile(sdopx, tpl) {
         //标签栈
@@ -20,7 +21,7 @@ var Compile = (function () {
         //已经关闭
         this.closed = false;
         //缓存编译
-        this.blockData = {};
+        this.blockCache = {};
         this.temp_vars = {};
         this.varters = {};
         this.temp_prefixs = {};
@@ -80,8 +81,8 @@ var Compile = (function () {
                 if (!tpl_item) {
                     return false;
                 }
-                if (sdopx_1.Sdopx.debug) {
-                    output.push('__line=' + tpl_item.info.line + ',__src=' + JSON.stringify(tpl_item.info.srcname) + ';');
+                if (index_1.Sdopx.debug) {
+                    output.push('__line=' + tpl_item.info.line + ';__src=' + JSON.stringify(tpl_item.info.srcname) + ';');
                 }
                 switch (tpl_item.map) {
                     case parser_1.Parser.CODE_EXPRESS:
@@ -97,33 +98,33 @@ var Compile = (function () {
                         output.push(tpl_item.code + ';');
                         break;
                     case parser_1.Parser.CODE_TAG: {
-                        var name_1 = tpl_item.name;
-                        var compfunc = Compile.Plugins[name_1] || null;
+                        var name = tpl_item.name;
+                        var compfunc = Compile.Plugins[name] || null;
                         var code_2 = null;
                         if (compfunc) {
                             tagend = true;
-                            code_2 = compfunc(name_1, tpl_item.args, this);
+                            code_2 = compfunc(name, tpl_item.args, this);
                             output.push(code_2);
                         }
                         else {
                             compfunc = Compile.Plugins['__customize'];
-                            code_2 = compfunc(name_1, tpl_item.args, this);
+                            code_2 = compfunc(name, tpl_item.args, this);
                             output.push(code_2);
                         }
                         break;
                     }
                     case parser_1.Parser.CODE_TAG_END: {
-                        var name_2 = tpl_item.name;
-                        var compfunc = Compile.Plugins[name_2 + '_close'] || null;
+                        var name = tpl_item.name;
+                        var compfunc = Compile.Plugins[name + '_close'] || null;
                         var code_3 = null;
                         if (compfunc) {
                             tagend = true;
-                            code_3 = compfunc(name_2, this);
+                            code_3 = compfunc(name, this);
                             output.push(code_3);
                         }
                         else {
                             compfunc = Compile.Plugins['__customize_close'];
-                            code_3 = compfunc(name_2, this);
+                            code_3 = compfunc(name, this);
                             output.push(code_3);
                         }
                         break;
@@ -138,8 +139,8 @@ var Compile = (function () {
                 if (cfgitem == null) {
                     return false;
                 }
-                if (sdopx_1.Sdopx.debug) {
-                    output.push('__line=' + cfgitem.info.line + ',__src=' + JSON.stringify(cfgitem.info.srcname) + ';');
+                if (index_1.Sdopx.debug) {
+                    output.push('__line=' + cfgitem.info.line + ';__src=' + JSON.stringify(cfgitem.info.srcname) + ';');
                 }
                 if (cfgitem.raw) {
                     output.push('__raw(' + cfgitem.code + ');');
@@ -165,9 +166,9 @@ var Compile = (function () {
                     return false;
                 }
                 if (parser_1.Parser.CODE_TAG_END == lit_item.map) {
-                    var name_3 = lit_item.name;
-                    var compfunc = Compile.Plugins[name_3 + '_close'];
-                    var code_4 = compfunc(name_3, this);
+                    var name = lit_item.name;
+                    var compfunc = Compile.Plugins[name + '_close'];
+                    var code_4 = compfunc(name, this);
                     output.push(code_4);
                 }
                 return !this.closed;
@@ -310,100 +311,127 @@ var Compile = (function () {
         return false;
     };
     //是否有block标记
-    Compile.prototype.hasBlock = function (name) {
-        return !(this.blockData[name] === void 0 || this.blockData[name] === null);
+    Compile.prototype.hasBlockCache = function (name) {
+        return !(this.blockCache[name] === void 0 || this.blockCache[name] === null);
     };
     //获取节点代码
-    Compile.prototype.getBlock = function (name) {
-        if (!this.hasBlock(name)) {
+    Compile.prototype.getBlockCache = function (name) {
+        if (!this.hasBlockCache(name)) {
             return null;
         }
-        return this.blockData[name];
+        return this.blockCache[name];
     };
     //添加已编译节点
-    Compile.prototype.addBlock = function (name, code) {
-        this.blockData[name] = code;
+    Compile.prototype.addBlockCache = function (name, block) {
+        this.blockCache[name] = block;
     };
-    Compile.prototype.getCursorBlock = function (name, offset) {
+    //获取当前块
+    Compile.prototype.getCursorBlockInfo = function (name, offset) {
         if (offset === void 0) { offset = 0; }
         if (offset == 0) {
             offset = this.source.cursor;
         }
-        var block = this.parser.getBrock(name);
-        if (block === null) {
+        var blocks = this.parser.getBrock(name);
+        if (blocks === null) {
             return null;
         }
-        var ublock = null;
-        if (block.length == 1) {
-            ublock = block[0];
+        var blockInfo = null;
+        if (blocks.length == 1) {
+            blockInfo = blocks[0];
         }
         else {
-            for (var i = 0; i < block.length; i++) {
-                var temp = block[i];
+            for (var i = 0; i < blocks.length; i++) {
+                var temp = blocks[i];
                 if (temp.start == offset) {
-                    ublock = temp;
+                    blockInfo = temp;
                     break;
                 }
             }
         }
-        return ublock;
+        return blockInfo;
     };
+    //获取第一块
+    Compile.prototype.getFirstBlockInfo = function (name) {
+        var blocks = this.parser.getBrock(name);
+        if (blocks === null) {
+            return null;
+        }
+        var blockInfo = null;
+        if (blocks.length >= 1) {
+            blockInfo = blocks[0];
+        }
+        return blockInfo;
+    };
+    //移动光标到 End 处
     Compile.prototype.moveBlockToEnd = function (name, offset) {
         if (offset === void 0) { offset = 0; }
-        var ublock = this.getCursorBlock(name, offset);
-        if (ublock === null) {
+        var blockInfo = this.getCursorBlockInfo(name, offset);
+        if (blockInfo === null) {
             return false;
         }
-        this.source.cursor = ublock.end;
+        this.source.cursor = blockInfo.end;
         return true;
     };
+    //移动光标到Over处
     Compile.prototype.moveBlockToOver = function (name, offset) {
         if (offset === void 0) { offset = 0; }
-        var ublock = this.getCursorBlock(name, offset);
-        if (ublock === null) {
+        var blockInfo = this.getCursorBlockInfo(name, offset);
+        if (blockInfo === null) {
             return false;
         }
-        this.source.cursor = ublock.over;
+        this.source.cursor = blockInfo.over;
         return true;
     };
     //编译节点
     Compile.prototype.compileBlock = function (name) {
-        var code = this.getBlock(name);
-        if (code === null) {
-            this.getParentBlock(name);
+        //查看是否有编译过的节点
+        var block = this.getParentBlock(name);
+        var info = this.getFirstBlockInfo(name);
+        if (info === null) {
+            return block;
         }
-        //如果父类有节点
-        var block = this.parser.getBrock(name);
-        if (block) {
-            var args = block[0];
-            var _a = args.hide, hide = _a === void 0 ? false : _a, _b = args.prepend, prepend = _b === void 0 ? false : _b, _c = args.append, append = _c === void 0 ? false : _c;
-            if (hide && code === null) {
-                return null;
-            }
-            if (!(prepend || append) && code !== null) {
-                return code;
-            }
-            var offset = this.source.cursor;
-            var bound = this.source.bound;
-            var closed_1 = this.closed;
-            //将光标移到开始处
-            this.source.cursor = args.start;
-            this.source.bound = args.over;
-            this.closed = false;
-            //将光标移到开始处
-            var output = this.compileTemplate();
-            this.closed = closed_1;
-            this.source.cursor = offset;
-            this.source.bound = bound;
-            if (prepend && code !== null) {
-                return code + '\n' + output;
-            }
-            if (append && code !== null) {
-                return output + '\n' + code;
-            }
-            return output;
+        if (info.hide && (block === null || block.code == null)) {
+            return null;
         }
-        return code;
+        var cursorBlock = { prepend: info.prepend, append: info.append, code: null };
+        var offset = this.source.cursor;
+        var bound = this.source.bound;
+        var closed = this.closed;
+        //将光标移到开始处
+        this.source.cursor = info.start;
+        this.source.bound = info.over;
+        this.closed = false;
+        var output = null;
+        //将光标移到开始处
+        if (info.literal) {
+            var literal = this.source.literal;
+            this.source.literal = true;
+            output = this.compileTemplate();
+            this.source.literal = literal;
+        }
+        else if (typeof (info.left) == 'string' && typeof (info.right) == 'string' && info.left.length > 0 && info.right.length > 0) {
+            var old_left = this.source.left_delimiter;
+            var old_right = this.source.right_delimiter;
+            this.source.changDelimiter(info.left, info.right);
+            output = this.compileTemplate();
+            this.source.changDelimiter(old_left, old_right);
+        }
+        else {
+            output = this.compileTemplate();
+        }
+        this.closed = closed;
+        this.source.cursor = offset;
+        this.source.bound = bound;
+        if (block != null) {
+            if (block.prepend && block.code !== null) {
+                output = block.code + '\n' + output;
+            }
+            else if (block.append && block.code !== null) {
+                output = output + '\n' + block.code;
+            }
+        }
+        cursorBlock.code = output;
+        return cursorBlock;
     };
     Compile.prototype.setVarTemp = function (dist) {
         this.temp_vars = dist.temp_vars;
@@ -418,13 +446,18 @@ var Compile = (function () {
         if (!this.tpl.parent) {
             return null;
         }
+        var block = this.getBlockCache(name);
+        if (block) {
+            return block;
+        }
         var pcomplie = this.tpl.parent.getCompile();
         var temp = pcomplie.getVarTemp();
         pcomplie.setVarTemp(this.getVarTemp());
-        var code = pcomplie.compileBlock(name);
+        block = pcomplie.compileBlock(name);
         pcomplie.setVarTemp(temp);
-        this.addBlock(name, code);
-        return code;
+        //缓存父节点中编译的代码--
+        this.addBlockCache(name, block);
+        return block;
     };
     //注册编译函数
     Compile.registerCompile = function (type, func) {
@@ -448,3 +481,4 @@ var Compile = (function () {
 }());
 exports.Compile = Compile;
 require("../compile");
+//# sourceMappingURL=compile.js.map

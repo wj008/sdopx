@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var compile_1 = require("../lib/compile");
 compile_1.Compile.registerCompile('block', function (tagname, args, compile) {
-    var _a = args.name, name = _a === void 0 ? null : _a, _b = args.hide, hide = _b === void 0 ? false : _b, _c = args.append, append = _c === void 0 ? false : _c, _d = args.prepend, prepend = _d === void 0 ? false : _d;
+    var _a = args.name, name = _a === void 0 ? null : _a, _b = args.hide, hide = _b === void 0 ? false : _b;
     if (name === null) {
         compile.addError("The block tag 'name' is a must.");
     }
@@ -11,11 +11,8 @@ compile_1.Compile.registerCompile('block', function (tagname, args, compile) {
         compile.addError("block tag attribute syntax error in 'name', mast be string");
     }
     var offset = compile.source.cursor;
-    var code = compile.getBlock(name);
-    if (code === null) {
-        code = compile.getParentBlock(name);
-    }
-    if (code === null) {
+    var block = compile.getParentBlock(name);
+    if (block === null || block.code === null) {
         if (hide) {
             //如果是隐藏标签 移动到尾部
             compile.moveBlockToOver(name, offset);
@@ -24,15 +21,15 @@ compile_1.Compile.registerCompile('block', function (tagname, args, compile) {
         return '';
     }
     else {
-        if (!(append || prepend)) {
+        if (!(block.append || block.prepend)) {
             compile.moveBlockToOver(name, offset);
         }
-        if (append) {
-            compile.openTag('block', [null, code]);
+        if (block.append) {
+            compile.openTag('block', [null, block.code]);
             return '';
         }
         compile.openTag('block', [null, '']);
-        return code;
+        return block.code || '';
     }
 });
 compile_1.Compile.registerCompile('block_close', function (tagname, compile) {
@@ -40,3 +37,4 @@ compile_1.Compile.registerCompile('block_close', function (tagname, compile) {
     var code = data[1] || '';
     return code;
 });
+//# sourceMappingURL=block.js.map

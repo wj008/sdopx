@@ -74,3 +74,4 @@ compile_1.Compile.registerCompile('for_close', function (name, compile) {
     output.push('}');
     return output.join('\n');
 });
+//# sourceMappingURL=for.js.map

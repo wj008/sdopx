@@ -51,3 +51,4 @@ compile_1.Compile.registerCompile('__customize_close', function (tagname, compil
     var _a = compile.closeTag([tagname]), data = _a[1];
     return "},$_sdopx);";
 });
+//# sourceMappingURL=customize.js.map

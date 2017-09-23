@@ -79,3 +79,4 @@ compile_1.Compile.registerCompile('global', function (name, args, compile) {
         return '$_sdopx._book[\'' + key_2 + '\']' + other + ';';
     }
 });
+//# sourceMappingURL=assign.js.map

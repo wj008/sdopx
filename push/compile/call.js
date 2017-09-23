@@ -21,3 +21,4 @@ compile_1.Compile.registerCompile('call', function (name, args, compile) {
     var params = "{" + temp.join(',') + "}";
     return "if(typeof $_sdopx.funcMap['" + fn + "'] =='function'){ $_sdopx.funcMap['" + fn + "'](" + params + ",{echo:__echo,raw:__raw},$_sdopx);}";
 });
+//# sourceMappingURL=call.js.map

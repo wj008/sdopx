@@ -1,23 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var sdopx_1 = require("../sdopx");
-sdopx_1.Sdopx.registerModifier('upper', function (str) {
+var index_1 = require("../index");
+index_1.Sdopx.registerModifier('upper', function (str) {
     return String(str).toUpperCase();
 });
-sdopx_1.Sdopx.registerModifier('lower', function (str) {
+index_1.Sdopx.registerModifier('lower', function (str) {
     return String(str).toLowerCase();
 });
-sdopx_1.Sdopx.registerModifier('strip_tags', function (str) {
+index_1.Sdopx.registerModifier('strip_tags', function (str) {
     return String(str).replace(/<[^>]*?>/g, '');
 });
-sdopx_1.Sdopx.registerModifier('default', function (str, def) {
+index_1.Sdopx.registerModifier('default', function (str, def) {
     if (def === void 0) { def = ''; }
     if (str == void 0 || str === null || (typeof str === 'string' && str.length == 0)) {
         return def;
     }
     return str;
 });
-sdopx_1.Sdopx.registerModifier('date_format', function (str, format) {
+index_1.Sdopx.registerModifier('date_format', function (str, format) {
     if (format === void 0) { format = 'yyyy-MM-dd'; }
     var date = null;
     if (str instanceof Date) {
@@ -103,7 +103,7 @@ sdopx_1.Sdopx.registerModifier('date_format', function (str, format) {
     return mask;
 });
 //左填充
-sdopx_1.Sdopx.registerModifier('leftpad', function (str, len, ch) {
+index_1.Sdopx.registerModifier('leftpad', function (str, len, ch) {
     if (len === void 0) { len = 0; }
     if (ch === void 0) { ch = ' '; }
     str = String(str);
@@ -118,7 +118,7 @@ sdopx_1.Sdopx.registerModifier('leftpad', function (str, len, ch) {
     return pad + str;
 });
 //右填充
-sdopx_1.Sdopx.registerModifier('rightpad', function (str, len, ch) {
+index_1.Sdopx.registerModifier('rightpad', function (str, len, ch) {
     if (ch === void 0) { ch = ' '; }
     str = String(str);
     if (len <= str.length) {
@@ -131,7 +131,7 @@ sdopx_1.Sdopx.registerModifier('rightpad', function (str, len, ch) {
     }
     return str + pad;
 });
-sdopx_1.Sdopx.registerModifier('truncate', function (str, len, etc) {
+index_1.Sdopx.registerModifier('truncate', function (str, len, etc) {
     if (len === void 0) { len = 60; }
     if (etc === void 0) { etc = ''; }
     str = String(str);
@@ -166,10 +166,10 @@ sdopx_1.Sdopx.registerModifier('truncate', function (str, len, etc) {
         }
     }
 });
-sdopx_1.Sdopx.registerModifier('nl2br', function (str) {
+index_1.Sdopx.registerModifier('nl2br', function (str) {
     return String(str).replace(/\n/g, '<br/>');
 });
-sdopx_1.Sdopx.registerModifier('option', function (str, opts, def) {
+index_1.Sdopx.registerModifier('option', function (str, opts, def) {
     if (def === void 0) { def = ''; }
     if (!(typeof str == 'string' || typeof str == 'number' || typeof str == 'boolean')) {
         return def;
@@ -201,11 +201,11 @@ sdopx_1.Sdopx.registerModifier('option', function (str, opts, def) {
 });
 //########################################################################################
 //## 函数使用
-sdopx_1.Sdopx.registerFunction('hello', function (str) {
+index_1.Sdopx.registerFunction('hello', function (str) {
     return 'hello ' + str;
 });
 //## 插件使用
-sdopx_1.Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
+index_1.Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
     var cycle_vars = sdopx._temp_cycle_vars = sdopx._temp_cycle_vars || {};
     var _a = params.name, name = _a === void 0 ? 'default' : _a, _b = params.print, print = _b === void 0 ? true : _b, _c = params.advance, advance = _c === void 0 ? true : _c, _d = params.reset, reset = _d === void 0 ? false : _d, _e = params.values, values = _e === void 0 ? null : _e, _f = params.delimiter, delimiter = _f === void 0 ? ',' : _f, _g = params.assign, assign = _g === void 0 ? null : _g;
     var item = cycle_vars[name] || null;
@@ -260,7 +260,7 @@ sdopx_1.Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
     out.raw(retval);
 });
 //## 注册插件块
-sdopx_1.Sdopx.registerPlugin('list', function (params, out, func, sdopx) {
+index_1.Sdopx.registerPlugin('list', function (params, out, func, sdopx) {
     var _a = params.data, data = _a === void 0 ? [] : _a;
     out.raw('<table>');
     for (var i = 0; i < data.length; i++) {
@@ -268,3 +268,4 @@ sdopx_1.Sdopx.registerPlugin('list', function (params, out, func, sdopx) {
     }
     out.raw('</table>');
 }, 2);
+//# sourceMappingURL=plugins.js.map

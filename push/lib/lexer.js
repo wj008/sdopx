@@ -5,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var syntaxrules_1 = require("./syntaxrules");
 var tree_map_1 = require("./tree_map");
-var sdopx_1 = require("../sdopx");
+var index_1 = require("../index");
 /**
  * 词法分词器
  */
@@ -190,7 +190,7 @@ var Lexer = (function () {
         syntaxrules_1.SyntaxRules.reset(source.left_delimiter, source.right_delimiter);
         this.stack = []; //清空栈
         var tree = this.tree = new tree_map_1.TreeMap();
-        if (sdopx_1.Sdopx.debug) {
+        if (index_1.Sdopx.debug) {
             tree.setInfo(this.getSourceInfo());
         }
         var tag = 'init';
@@ -211,31 +211,31 @@ var Lexer = (function () {
                 return tree;
             }
             //存栈
-            var open_1 = syntaxrules_1.SyntaxRules.getOpen(tag);
-            if (open_1 !== null) {
+            var open = syntaxrules_1.SyntaxRules.getOpen(tag);
+            if (open !== null) {
                 //打开是时候清理
-                if (open_1 == syntaxrules_1.Rules.BOUND_TAG_ATTR) {
+                if (open == syntaxrules_1.Rules.BOUND_TAG_ATTR) {
                     var endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
                     while (endflag && ((syntaxrules_1.Rules.BOUND_MODIFIER | syntaxrules_1.Rules.BOUND_TAG_ATTR) & endflag) > 0) {
                         this.stack.pop();
                         endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
                     }
                 }
-                if (open_1 == syntaxrules_1.Rules.BOUND_MODIFIER) {
+                if (open == syntaxrules_1.Rules.BOUND_MODIFIER) {
                     var endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
                     while (endflag && (syntaxrules_1.Rules.BOUND_MODIFIER & endflag) > 0) {
                         this.stack.pop();
                         endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
                     }
                 }
-                this.stack.push(open_1);
+                this.stack.push(open);
                 // console.error('===栈数据===：', this.stack);
             }
             //离栈
-            var close_1 = syntaxrules_1.SyntaxRules.getClose(tag);
-            if (close_1 !== null) {
+            var close = syntaxrules_1.SyntaxRules.getClose(tag);
+            if (close !== null) {
                 var endflag = this.stack.length == 0 ? null : this.stack[this.stack.length - 1];
-                if ((close_1 & endflag) == 0) {
+                if ((close & endflag) == 0) {
                     this.addError("Syntax Error:Error parsing template, the appropriate tag end region not found", source.cursor);
                     return null;
                 }
@@ -254,6 +254,18 @@ var Lexer = (function () {
         if (source.cursor >= source.bound) {
             return null;
         }
+        //如果标签为空
+        if (source.literal || source.left_delimiter == null || source.left_delimiter == '' || source.right_delimiter == null || source.right_delimiter == '') {
+            if (source.end_literal) {
+                var ret2 = this.retInfo(source.end_literal, null, true);
+                if (ret2) {
+                    var code_1 = source.content.substring(source.cursor, ret2.start);
+                    source.cursor = ret2.end; //是开始还是结束
+                    return { map: '', code: code_1, next: 'closeLiteral' };
+                }
+            }
+            return { map: '', code: source.content.substring(source.cursor, source.bound), next: 'finish' };
+        }
         syntaxrules_1.SyntaxRules.reset(source.left_delimiter, source.right_delimiter);
         //找模板开始标记
         var ret = this.retInfo(new RegExp(source.left_delimiter), null, true);
@@ -261,9 +273,9 @@ var Lexer = (function () {
         if (source.end_literal) {
             var ret2 = this.retInfo(source.end_literal, null, true);
             if (ret2 && (!ret || ret2.start <= ret.start)) {
-                var code_1 = source.content.substring(source.cursor, ret2.start);
+                var code_2 = source.content.substring(source.cursor, ret2.start);
                 source.cursor = ret2.end; //是开始还是结束
-                return { map: '', code: code_1, next: 'closeLiteral' };
+                return { map: '', code: code_2, next: 'closeLiteral' };
             }
         }
         //到尾部都没找到模板
@@ -326,7 +338,7 @@ var Lexer = (function () {
         }
         syntaxrules_1.SyntaxRules.reset(source.left_delimiter, source.right_delimiter);
         var tree = this.tree = new tree_map_1.TreeMap();
-        if (sdopx_1.Sdopx.debug) {
+        if (index_1.Sdopx.debug) {
             tree.setInfo(this.getSourceInfo());
         }
         var tag = 'initConfig';
@@ -381,7 +393,10 @@ var Lexer = (function () {
                 append: false,
                 prepend: false,
                 hide: false,
-                nocache: false
+                nocache: false,
+                left: null,
+                right: null,
+                literal: false
             };
             //查找’{blick ‘和 {/blocl }
             var ret = this.retInfo(regexp, offset);
@@ -412,7 +427,7 @@ var Lexer = (function () {
                 continue;
             }
             while (ret) {
-                var regexp_1 = new RegExp('^(name)=\\s*|^(append|prepend|hide|nocache)\\s*|^(' + right + ')');
+                var regexp_1 = new RegExp('^(name|left|right)=\\s*|^(append|prepend|hide|nocache|literal)\\s*|^(' + right + ')');
                 //扫描属性数据
                 ret = this.retInfo(regexp_1, offset);
                 if (!ret) {
@@ -435,6 +450,18 @@ var Lexer = (function () {
                     offset = retm.end;
                     item.name = retm.val;
                 }
+                else if (attr === 'left' || attr === 'right') {
+                    var regexp_3 = new RegExp("^'([^']+)'\\s*|^\"([^\"]+)\"\\s*");
+                    var retm = this.retInfo(regexp_3, offset);
+                    if (!retm || retm.val.length === 0) {
+                        //error:查找属性值失败
+                        this.addError("Syntax Error:Error parsing template, " + attr + " Invalid property value in the block tag.", offset);
+                        return null;
+                    }
+                    //将位置移到查找尾部
+                    offset = retm.end;
+                    item[attr] = retm.val.trim();
+                }
                 else if (source.right_delimiter_raw == attr) {
                     //这里的start 是从开始节点以后的内容
                     item.start = offset;
@@ -454,15 +481,16 @@ var Lexer = (function () {
             if (!block.name || block.name.length == 0) {
                 continue;
             }
-            var name_1 = block.name;
-            if (this.blocks[name_1]) {
-                this.blocks[name_1].push(block);
+            var name = block.name;
+            if (this.blocks[name]) {
+                this.blocks[name].push(block);
             }
             else {
-                this.blocks[name_1] = [block];
+                this.blocks[name] = [block];
             }
         }
     };
     return Lexer;
 }());
 exports.Lexer = Lexer;
+//# sourceMappingURL=lexer.js.map

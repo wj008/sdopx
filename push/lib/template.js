@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var sdopx_1 = require("../sdopx");
+var index_1 = require("../index");
 var resource_1 = require("./resource");
 var compile_1 = require("./compile");
 var utils = require("./utils");
@@ -115,9 +115,9 @@ var Template = (function () {
         };
         unifunc.call(null, this.sdopx, __echo, __raw, __throw);
         var out = __output.join('');
-        if (this === this.sdopx && sdopx_1.Sdopx.Filters['output'] && sdopx_1.Sdopx.Filters['output'] instanceof Array) {
-            for (var i = 0; i < sdopx_1.Sdopx.Filters['output'].length; i++) {
-                var func = sdopx_1.Sdopx.Filters['output'][i];
+        if (this === this.sdopx && index_1.Sdopx.Filters['output'] && index_1.Sdopx.Filters['output'] instanceof Array) {
+            for (var i = 0; i < index_1.Sdopx.Filters['output'].length; i++) {
+                var func = index_1.Sdopx.Filters['output'][i];
                 out = func(out, this.sdopx);
             }
         }
@@ -147,16 +147,16 @@ var Template = (function () {
         try {
             var out = [];
             out.push('var __Sdopx=$_sdopx._Sdopx;');
-            if (sdopx_1.Sdopx.debug) {
+            if (index_1.Sdopx.debug) {
                 out.push('var __line=0,__src=\'' + this.source.tplname + '\';');
                 out.push('try{');
             }
             out.push(code);
-            if (sdopx_1.Sdopx.debug) {
+            if (index_1.Sdopx.debug) {
                 out.push('}catch(e){__throw(e,__line,__src);}');
             }
             code = out.join('\n');
-            if (sdopx_1.Sdopx.create_runfile) {
+            if (index_1.Sdopx.create_runfile) {
                 fs.writeFileSync(codeid + '.js', code);
             }
             var unifunc = new Function('$_sdopx,__echo,__raw,__throw', code);
@@ -166,7 +166,7 @@ var Template = (function () {
         }
         catch (e) {
             if (e instanceof SyntaxError) {
-                e.message += ' while compiling ' + sdopx_1.Sdopx.extension;
+                e.message += ' while compiling ' + index_1.Sdopx.extension;
             }
             throw e;
         }
@@ -237,3 +237,4 @@ var Template = (function () {
     return Template;
 }());
 exports.Template = Template;
+//# sourceMappingURL=template.js.map

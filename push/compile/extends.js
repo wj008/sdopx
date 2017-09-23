@@ -27,3 +27,4 @@ compile_1.Compile.registerCompile('extends', function (name, args, compile) {
     compile.closed = true;
     return tpl.compileTemplateSource();
 });
+//# sourceMappingURL=extends.js.map

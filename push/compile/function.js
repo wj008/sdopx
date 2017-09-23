@@ -40,3 +40,4 @@ compile_1.Compile.registerCompile('function_close', function (name, compile) {
     compile.removeVar(data[0]);
     return "}";
 });
+//# sourceMappingURL=function.js.map

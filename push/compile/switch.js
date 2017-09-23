@@ -70,3 +70,4 @@ compile_1.Compile.registerCompile('switch_close', function (name, compile) {
     output.push('}');
     return output.join('\n');
 });
+//# sourceMappingURL=switch.js.map

@@ -19,3 +19,4 @@ compile_1.Compile.registerCompile('if_close', function (name, compile) {
     compile.closeTag(['if', 'else', 'elseif']);
     return "}";
 });
+//# sourceMappingURL=if.js.map

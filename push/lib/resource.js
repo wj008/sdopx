@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var sdopx_1 = require("../sdopx");
+var index_1 = require("../index");
 var source_1 = require("./source");
 var fs = require("fs");
 var path = require("path");
@@ -72,7 +72,7 @@ var Resource = (function () {
         var testPath = function (dirname, tplname) {
             var fpath = path.join(dirname, tplname);
             if (!/\.[a-z]+$/i.test(tplname)) {
-                var epath = fpath + '.' + sdopx_1.Sdopx.extension;
+                var epath = fpath + '.' + index_1.Sdopx.extension;
                 if (fs.existsSync(epath)) {
                     return epath;
                 }
@@ -83,8 +83,8 @@ var Resource = (function () {
                 return fpath;
             }
             //补后缀
-            if (fs.existsSync(fpath + '.' + sdopx_1.Sdopx.extension)) {
-                return fpath + '.' + sdopx_1.Sdopx.extension;
+            if (fs.existsSync(fpath + '.' + index_1.Sdopx.extension)) {
+                return fpath + '.' + index_1.Sdopx.extension;
             }
             return null;
         };
@@ -122,7 +122,7 @@ Resource.registerResource('file', {
         var filepath = Resource.getPath(tplname, sdopx);
         if (filepath == null) {
             if (!/\.[a-z]+$/i.test(tplname)) {
-                tplname += '.' + sdopx_1.Sdopx.extension;
+                tplname += '.' + index_1.Sdopx.extension;
             }
             sdopx.rethrow("file does not exist:'" + tplname + "'");
             return { content: '', timestamp: 0, filepath: tplname };
@@ -196,3 +196,4 @@ Resource.registerResource('base64', {
         return -1;
     }
 });
+//# sourceMappingURL=resource.js.map

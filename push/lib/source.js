@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var sdopx_1 = require("../sdopx");
+var index_1 = require("../index");
 var utils = require("./utils");
 var Source = (function () {
     function Source(resource, sdopx, tplname, tplId, type, name) {
@@ -34,6 +34,7 @@ var Source = (function () {
         this.left_delimiter_raw = '{';
         this.right_delimiter_raw = '}';
         this.end_literal = null;
+        this.literal = false;
         this.resource = resource;
         this.sdopx = sdopx;
         this.tplname = tplname;
@@ -53,9 +54,9 @@ var Source = (function () {
     //加载模板
     Source.prototype.load = function () {
         var _a = this.resource.fetch(this.name, this.sdopx), _b = _a.content, content = _b === void 0 ? '' : _b, _c = _a.timestamp, timestamp = _c === void 0 ? 0 : _c;
-        if (content.length > 0 && sdopx_1.Sdopx.Filters['pre'] && sdopx_1.Sdopx.Filters['pre'] instanceof Array) {
-            for (var i = 0; i < sdopx_1.Sdopx.Filters['pre'].length; i++) {
-                var func = sdopx_1.Sdopx.Filters['pre'][i];
+        if (content.length > 0 && index_1.Sdopx.Filters['pre'] && index_1.Sdopx.Filters['pre'] instanceof Array) {
+            for (var i = 0; i < index_1.Sdopx.Filters['pre'].length; i++) {
+                var func = index_1.Sdopx.Filters['pre'][i];
                 content = func(content, this.sdopx);
             }
         }
@@ -74,3 +75,4 @@ var Source = (function () {
     return Source;
 }());
 exports.Source = Source;
+//# sourceMappingURL=source.js.map
