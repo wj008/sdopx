@@ -36,6 +36,7 @@ export class Source {
     public left_delimiter_raw = '{';
     public right_delimiter_raw = '}';
     public end_literal = null;
+    public literal = false;
 
     public constructor(resource, sdopx, tplname, tplId, type, name) {
         this.resource = resource;
@@ -56,7 +57,7 @@ export class Source {
 
     //加载模板
     public load() {
-        let {content = '', timestamp = 0} =this.resource.fetch(this.name, this.sdopx);
+        let {content = '', timestamp = 0} = this.resource.fetch(this.name, this.sdopx);
         if (content.length > 0 && Sdopx.Filters['pre'] && Sdopx.Filters['pre'] instanceof Array) {
             for (let i = 0; i < Sdopx.Filters['pre'].length; i++) {
                 let func = Sdopx.Filters['pre'][i];

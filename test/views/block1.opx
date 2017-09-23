@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$title}</title>
+</head>
+<body>
+{block name=body}hello this is block 1{/block}
+{include file="3foot"}
+
+{block name=foot} block 1111 foot{/block}
+<ul>
+    {foreach from=$list item=rs}
+    {block name=loop}{/block}
+    {/foreach}
+</ul>
+{block name=foot} block 1 foot{/block}
+</body>
+</html>

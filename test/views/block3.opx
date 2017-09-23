@@ -1,0 +1,4 @@
+{extends file='block2'}
+
+{block name=body}hello this is block 3{/block}
+{block name=foot prepend} block 3 foot{/block}

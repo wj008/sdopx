@@ -17,6 +17,7 @@ export class Varter {
     }
 }
 
+
 export class Compile {
 
     public static Plugins = {};
@@ -25,7 +26,7 @@ export class Compile {
     //已经关闭
     public closed = false;
     //缓存编译
-    private blockData = {};
+    private blockCache = {};
     private temp_vars = {};
     private varters = {};
     private temp_prefixs = {};
@@ -33,7 +34,6 @@ export class Compile {
     private parser: Parser = null;
     public sdopx: Sdopx = null;
     public tpl: Template = null;
-
 
     public constructor(sdopx: Sdopx, tpl: Template) {
         this.sdopx = sdopx;
@@ -328,103 +328,130 @@ export class Compile {
     }
 
     //是否有block标记
-    public hasBlock(name) {
-        return !(this.blockData[name] === void 0 || this.blockData[name] === null);
+    public hasBlockCache(name) {
+        return !(this.blockCache[name] === void 0 || this.blockCache[name] === null);
     }
 
     //获取节点代码
-    public getBlock(name) {
-        if (!this.hasBlock(name)) {
+    public getBlockCache(name: string): any {
+        if (!this.hasBlockCache(name)) {
             return null;
         }
-        return this.blockData[name];
+        return this.blockCache[name];
     }
 
     //添加已编译节点
-    public addBlock(name, code) {
-        this.blockData[name] = code;
+    public addBlockCache(name: string, block: any) {
+        this.blockCache[name] = block;
     }
 
-    private getCursorBlock(name, offset = 0) {
+    //获取当前块
+    private getCursorBlockInfo(name, offset = 0): any {
         if (offset == 0) {
             offset = this.source.cursor;
         }
-        let block = this.parser.getBrock(name);
-        if (block === null) {
+        let blocks = this.parser.getBrock(name);
+        if (blocks === null) {
             return null;
         }
-        let ublock = null;
-        if (block.length == 1) {
-            ublock = block[0];
+        let blockInfo = null;
+        if (blocks.length == 1) {
+            blockInfo = blocks[0];
         }
         else {
-            for (let i = 0; i < block.length; i++) {
-                let temp = block[i];
+            for (let i = 0; i < blocks.length; i++) {
+                let temp = blocks[i];
                 if (temp.start == offset) {
-                    ublock = temp;
+                    blockInfo = temp;
                     break;
                 }
             }
         }
-        return ublock;
+        return blockInfo;
     }
 
-    public moveBlockToEnd(name, offset = 0) {
-        let ublock = this.getCursorBlock(name, offset);
-        if (ublock === null) {
+    //获取第一块
+    private getFirstBlockInfo(name): any {
+        let blocks = this.parser.getBrock(name);
+        if (blocks === null) {
+            return null;
+        }
+        let blockInfo = null;
+        if (blocks.length >= 1) {
+            blockInfo = blocks[0];
+        }
+        return blockInfo;
+    }
+
+    //移动光标到 End 处
+    public moveBlockToEnd(name, offset = 0): boolean {
+        let blockInfo = this.getCursorBlockInfo(name, offset);
+        if (blockInfo === null) {
             return false;
         }
-        this.source.cursor = ublock.end;
+        this.source.cursor = blockInfo.end;
         return true;
     }
 
-    public moveBlockToOver(name, offset = 0) {
-        let ublock = this.getCursorBlock(name, offset);
-        if (ublock === null) {
+    //移动光标到Over处
+    public moveBlockToOver(name, offset = 0): boolean {
+        let blockInfo = this.getCursorBlockInfo(name, offset);
+        if (blockInfo === null) {
             return false;
         }
-        this.source.cursor = ublock.over;
+        this.source.cursor = blockInfo.over;
         return true;
     }
 
     //编译节点
-    public compileBlock(name) {
-        let code = this.getBlock(name);
-        if (code === null) {
-            this.getParentBlock(name);
+    public compileBlock(name): any {
+        //查看是否有编译过的节点
+        let block = this.getParentBlock(name);
+        let info = this.getFirstBlockInfo(name);
+        if (info === null) {
+            return block;
         }
-        //如果父类有节点
-        let block = this.parser.getBrock(name);
-        if (block) {
-            let args = block[0];
-            let {hide = false, prepend = false, append = false} = args;
-            if (hide && code === null) {
-                return null;
-            }
-            if (!(prepend || append) && code !== null) {
-                return code;
-            }
-            let offset = this.source.cursor;
-            let bound = this.source.bound;
-            let closed = this.closed;
-            //将光标移到开始处
-            this.source.cursor = args.start;
-            this.source.bound = args.over;
-            this.closed = false;
-            //将光标移到开始处
-            let output = this.compileTemplate();
-            this.closed = closed;
-            this.source.cursor = offset;
-            this.source.bound = bound;
-            if (prepend && code !== null) {
-                return code + '\n' + output;
-            }
-            if (append && code !== null) {
-                return output + '\n' + code;
-            }
-            return output;
+        if (info.hide && (block === null || block.code == null)) {
+            return null;
         }
-        return code;
+        let cursorBlock = {prepend: info.prepend, append: info.append, code: null};
+        let offset = this.source.cursor;
+        let bound = this.source.bound;
+        let closed = this.closed;
+        //将光标移到开始处
+        this.source.cursor = info.start;
+        this.source.bound = info.over;
+        this.closed = false;
+        let output = null;
+        //将光标移到开始处
+        if (info.literal) {
+            let literal = this.source.literal;
+            this.source.literal = true;
+            output = this.compileTemplate();
+            this.source.literal = literal;
+        }
+        else if (typeof(info.left) == 'string' && typeof(info.right) == 'string' && info.left.length > 0 && info.right.length > 0) {
+            let old_left = this.source.left_delimiter;
+            let old_right = this.source.right_delimiter;
+            this.source.changDelimiter(info.left, info.right);
+            output = this.compileTemplate();
+            this.source.changDelimiter(old_left, old_right);
+        } else {
+            output = this.compileTemplate();
+        }
+        this.closed = closed;
+        this.source.cursor = offset;
+        this.source.bound = bound;
+        if (block != null) {
+            if (block.prepend && block.code !== null) {
+                output = block.code + '\n' + output;
+            }
+            else if (block.append && block.code !== null) {
+                output = output + '\n' + block.code;
+            }
+        }
+        cursorBlock.code = output;
+        return cursorBlock;
     }
 
     public setVarTemp(dist: any) {
@@ -442,13 +469,20 @@ export class Compile {
         if (!this.tpl.parent) {
             return null;
         }
+        let block = this.getBlockCache(name);
+        if (block) {
+            return block;
+        }
+
         let pcomplie = this.tpl.parent.getCompile();
         let temp = pcomplie.getVarTemp();
         pcomplie.setVarTemp(this.getVarTemp());
-        let code = pcomplie.compileBlock(name);
+        block = pcomplie.compileBlock(name);
         pcomplie.setVarTemp(temp);
-        this.addBlock(name, code);
-        return code;
+
+        //缓存父节点中编译的代码--
+        this.addBlockCache(name, block);
+        return block;
     }
 
     //注册编译函数

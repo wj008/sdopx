@@ -1,6 +1,6 @@
 //测试分界符号指定 可使用命令行直接运行
 var path = require('path');
-var Sdopx = require("../../push/sdopx").Sdopx;
+var Sdopx = require("../../push/index").Sdopx;
 //Sdopx.create_runfile=true; //输出编译后的文件
 
 //设置模板路径

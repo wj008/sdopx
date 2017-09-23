@@ -1,5 +1,5 @@
 {extends file='3layout'}
-{block name=body}
+{block name=body literal}
 <h1>{$title}</h1>
 <p>Welcome to {$meetingPlace}</p>
 
@@ -15,7 +15,7 @@
 
 {/block}
 
-{block name=loop}
-<li>{$rs.id}-{$rs.name}</li>
+{block name=loop left='<%' right='%>'}
+<li><%$rs.id%>-<%$rs.name%></li>
 {include file="loop.inc"}
 {/block}

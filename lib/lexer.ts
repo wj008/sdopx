@@ -223,7 +223,6 @@ export class Lexer {
             }
             //存栈
             let open = SyntaxRules.getOpen(tag);
-
             if (open !== null) {
                 //打开是时候清理
                 if (open == Rules.BOUND_TAG_ATTR) {
@@ -268,6 +267,19 @@ export class Lexer {
         if (source.cursor >= source.bound) {
             return null;
         }
+        //如果标签为空
+        if (source.literal || source.left_delimiter == null || source.left_delimiter == '' || source.right_delimiter == null || source.right_delimiter == '') {
+            if (source.end_literal) {
+                let ret2 = this.retInfo(source.end_literal, null, true);
+                if (ret2) {
+                    let code = source.content.substring(source.cursor, ret2.start);
+                    source.cursor = ret2.end;//是开始还是结束
+                    return {map: '', code: code, next: 'closeLiteral'};
+                }
+            }
+            return {map: '', code: source.content.substring(source.cursor, source.bound), next: 'finish'};
+        }
+
         SyntaxRules.reset(source.left_delimiter, source.right_delimiter);
         //找模板开始标记
         let ret = this.retInfo(new RegExp(source.left_delimiter), null, true);
@@ -402,7 +414,10 @@ export class Lexer {
                 append: false,
                 prepend: false,
                 hide: false,
-                nocache: false
+                nocache: false,
+                left: null,
+                right: null,
+                literal: false
             };
 
             //查找’{blick ‘和 {/blocl }
@@ -436,7 +451,7 @@ export class Lexer {
             }
 
             while (ret) {
-                let regexp = new RegExp('^(name)=\\s*|^(append|prepend|hide|nocache)\\s*|^(' + right + ')');
+                let regexp = new RegExp('^(name|left|right)=\\s*|^(append|prepend|hide|nocache|literal)\\s*|^(' + right + ')');
                 //扫描属性数据
                 ret = this.retInfo(regexp, offset);
                 if (!ret) {
@@ -458,6 +473,18 @@ export class Lexer {
                     //将位置移到查找尾部
                     offset = retm.end;
                     item.name = retm.val;
+                }
+                else if (attr === 'left' || attr === 'right') {
+                    let regexp = new RegExp(`^'([^']+)'\\s*|^"([^"]+)"\\s*`);
+                    let retm = this.retInfo(regexp, offset);
+                    if (!retm || retm.val.length === 0) {
+                        //error:查找属性值失败
+                        this.addError(`Syntax Error:Error parsing template, ${attr} Invalid property value in the block tag.`, offset);
+                        return null;
+                    }
+                    //将位置移到查找尾部
+                    offset = retm.end;
+                    item[attr] = retm.val.trim();
                 }
                 //如果碰到结束符号
                 else if (source.right_delimiter_raw == attr) {

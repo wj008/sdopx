@@ -11,5 +11,5 @@ opx.assign('title', 'hello sdopx');
 opx.assign('foot_content', 'All rights reserved.');
 opx.assign('meetingPlace', 'New York');
 opx.assign('list', [{id: 1, name: 'aaa'}, {id: 2, name: 'bbb'}]);
-var outhtml = opx.display('3index');
+var outhtml = opx.display('block3');
 console.log(outhtml);

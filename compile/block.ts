@@ -1,7 +1,7 @@
 import {Compile} from "../lib/compile";
 
 Compile.registerCompile('block', (tagname, args, compile: Compile) => {
-    let {name = null, hide = false, append = false, prepend = false} = args;
+    let {name = null, hide = false} = args;
     if (name === null) {
         compile.addError(`The block tag 'name' is a must.`);
     }
@@ -10,32 +10,30 @@ Compile.registerCompile('block', (tagname, args, compile: Compile) => {
         compile.addError(`block tag attribute syntax error in 'name', mast be string`);
     }
     let offset = compile.source.cursor;
-    let code = compile.getBlock(name);
-    if (code === null) {
-        code = compile.getParentBlock(name);
-    }
-    if (code === null) {
+    let block = compile.getParentBlock(name);
+    if (block === null || block.code === null) {
         if (hide) {
             //如果是隐藏标签 移动到尾部
             compile.moveBlockToOver(name, offset);
         }
         compile.openTag('block', [null, '']);
         return '';
-    } else {
-        if (!(append || prepend)) {
+    }
+    else {
+        if (!(block.append || block.prepend)) {
             compile.moveBlockToOver(name, offset);
         }
-        if (append) {
-            compile.openTag('block', [null, code]);
+        if (block.append) {
+            compile.openTag('block', [null, block.code]);
             return '';
         }
         compile.openTag('block', [null, '']);
-        return code;
+        return block.code || '';
     }
 });
 
 Compile.registerCompile('block_close', (tagname, compile: Compile) => {
-    let [,data]= compile.closeTag(['block']);
+    let [, data] = compile.closeTag(['block']);
     let code = data[1] || '';
     return code;
 });

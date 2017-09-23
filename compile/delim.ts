@@ -9,37 +9,48 @@ Compile.registerCompile('rdelim', (name, args, compile: Compile) => {
 });
 
 Compile.registerCompile('literal', (name, args, compile: Compile) => {
-    let {left = `'{@'`, right = `'@}'`}=args;
-    var $_sdopx = compile.sdopx;
-    let tplleft = '';
-    try {
-        tplleft = eval('(' + left + ')');
-    } catch (e) {
-        compile.addError('left delimiter parsing error');
+    let {left = null, right = null} = args;
+    var $_sdopx = compile.sdopx, delim_left = '', delim_right = '', literal = false;
+    if (left || right) {
+        try {
+            delim_left = eval('(' + left + ')');
+        } catch (e) {
+            compile.addError('left delimiter parsing error');
+        }
+        try {
+            delim_right = eval('(' + right + ')');
+        } catch (e) {
+            compile.addError('right delimiter parsing error');
+        }
+        if (!delim_left || typeof(delim_left) !== 'string' || delim_left.trim() == '') {
+            compile.addError('left delimiter can not be empty');
+        }
+        if (!delim_right || typeof(delim_right) !== 'string' || delim_right.trim() == '') {
+            compile.addError('right delimiter can not be empty');
+        }
+        delim_left = delim_left.trim();
+        delim_right = delim_right.trim();
+    } else {
+        literal = true;
     }
-    let tplright = '';
-    try {
-        tplright = eval('(' + right + ')');
-    } catch (e) {
-        compile.addError('right delimiter parsing error');
+    compile.source.end_literal = new RegExp(compile.source.left_delimiter + '/literal' + compile.source.right_delimiter);
+    compile.openTag('literal', [null, literal, compile.source.literal, compile.source.left_delimiter_raw, compile.source.right_delimiter_raw]);
+    if (literal) {
+        compile.source.literal = true;
+    } else {
+        compile.source.changDelimiter(delim_left, delim_right);
     }
-    if (!tplleft || typeof(tplleft) !== 'string' || tplleft == '') {
-        compile.addError('left delimiter can not be empty');
-    }
-    if (!tplright || typeof(tplright) !== 'string' || tplright == '') {
-        compile.addError('right delimiter can not be empty');
-    }
-    let reg = new RegExp(compile.source.left_delimiter + '/literal' + compile.source.right_delimiter);
-    compile.source.end_literal = reg;
-    compile.openTag('literal', [null, compile.source.left_delimiter_raw, compile.source.right_delimiter_raw]);
-    compile.source.changDelimiter(tplleft, tplright);
     return '';
 });
 
 Compile.registerCompile('literal_close', (name, compile: Compile) => {
-    let [,data]=compile.closeTag(['literal']);
-    let [, left, right]=data;
-    compile.source.changDelimiter(left, right);
+    let [, data] = compile.closeTag(['literal']);
+    let [, literal, old_literal, old_left, old_right] = data;
+    if (literal) {
+        compile.source.literal = old_literal;
+    } else {
+        compile.source.changDelimiter(old_left, old_right);
+    }
     return '';
 });
 
