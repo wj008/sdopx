@@ -1,4 +1,5 @@
 import {Compile} from "../lib/compile";
+
 Compile.registerCompile('for', (name, args, compile: Compile) => {
     let {start = null, key = null, step = null, lt = null, gt = null, gte = null, lte = null, neq = null, eq = null, to = null} = args;
     //起始
@@ -57,7 +58,7 @@ Compile.registerCompile('for', (name, args, compile: Compile) => {
 })
 
 Compile.registerCompile('forelse', (name, args, compile: Compile) => {
-    let [,data]=compile.closeTag(['for']);
+    let [, data] = compile.closeTag(['for']);
     let prefix = data[0];
     compile.openTag('forelse', data);
     let output = [];
@@ -67,7 +68,7 @@ Compile.registerCompile('forelse', (name, args, compile: Compile) => {
 });
 
 Compile.registerCompile('for_close', (name, compile: Compile) => {
-    let [,data]= compile.closeTag(['for', 'forelse']);
+    let [, data] = compile.closeTag(['for', 'forelse']);
     compile.removeVar(data[0]);
     let output = [];
     output.push('}');
