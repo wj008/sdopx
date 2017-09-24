@@ -313,6 +313,14 @@ export class Parser {
             let callback = this.sdopx._Sdopx.Functions[name] || null;
             if (typeof(callback) == 'function') {
                 temp.code = '__Sdopx.Functions[' + JSON.stringify(name) + '](';
+            } else {
+                if (name.length > 10 && name.substr(0, 10) == 'sdopx_mod_') {
+                    let mod_name = name.substring(10);
+                    callback = this.sdopx._Sdopx.Modifiers[mod_name] || null;
+                    if (typeof(callback) == 'function') {
+                        temp.code = '__Sdopx.Modifiers[' + JSON.stringify(mod_name) + '](';
+                    }
+                }
             }
         }
         return temp;
