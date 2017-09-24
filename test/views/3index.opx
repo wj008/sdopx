@@ -1,5 +1,5 @@
 {extends file='3layout'}
-{block name=body literal}
+{block name=body}
 <h1>{$title}</h1>
 <p>Welcome to {$meetingPlace}</p>
 
@@ -13,6 +13,8 @@
 {$name}<-- 局部变量不会显示
 {$gname+'dddddd'}<-- 全局变量会显示
 
+{new Date()|date_format:'yyyy-MM-dd'}
+{sdopx_mod_lower(new Date(),'yyyy-MM-dd')}
 {/block}
 
 {block name=loop left='<%' right='%>'}
