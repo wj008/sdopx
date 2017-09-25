@@ -176,7 +176,7 @@ export class Rules {
     //代码标签
     public static openCodeTag() {
         return {
-            rule: /(?:if|else\s*if|while|assign|global|switch)\s+/,
+            rule: /(?:if|else\s*if|while|assign|global)\s+/,
             token: 'tagcode',
             next: Rules.expression(0),
             open: Rules.BOUND_TAG,
@@ -348,7 +348,7 @@ export class Rules {
     //关键字 暂时先这3个
     public static keyWord() {
         return {
-            rule: /false|true|null|void\s+0]|Object|Array/,
+            rule: /false|true|null|void\s+0]|Object|Array|Number/,
             token: 'code',
             next: Rules.finishExpression(3)
         };
