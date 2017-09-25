@@ -243,7 +243,7 @@ export class Parser {
             code: item.value,
             node: item.node
         };
-        temp.code = ' ' + item.value.replace(/(^\s+|\s+$)/g, '') + ' ';
+        temp.code = ' ' + item.value.trim() + ' ';
         return temp;
     }
 

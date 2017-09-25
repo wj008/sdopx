@@ -348,7 +348,7 @@ export class Rules {
     //关键字 暂时先这3个
     public static keyWord() {
         return {
-            rule: /false|true|null|void\s+0]/,
+            rule: /false|true|null|void\s+0]|Object|Array/,
             token: 'code',
             next: Rules.finishExpression(3)
         };
@@ -433,8 +433,8 @@ export class Rules {
 //比较运算符号 常量可在前面
     public static symbol() {
         return {
-            rule: /===|!==|==|!=|>=|<=|\+|-|\*|\/|%|&&|\|\||>|</,
-            token: 'code',
+            rule: /===|!==|==|!=|>=|<=|\+|-|\*|\/|%|&&|\|\||>|<|instanceof/,
+            token: 'symbol',
             next: Rules.expression(),
         };
     }
@@ -442,8 +442,8 @@ export class Rules {
 //符号 变量可以在前面
     public static variableSymbol() {
         return {
-            rule: /===|!==|==|!=|>=|<=|=|\+=|-=|\*=|\/=|%=|\+|-|\*|\/|%|&&|\|\||>|</,
-            token: 'code',
+            rule: /===|!==|==|!=|>=|<=|=|\+=|-=|\*=|\/=|%=|\+|-|\*|\/|%|&&|\|\||>|<|instanceof/,
+            token: 'symbol',
             next: Rules.expression(),
         };
     }
