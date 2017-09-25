@@ -1,7 +1,7 @@
 import {Compile} from "../lib/compile";
 
 Compile.registerCompile('for', (name, args, compile: Compile) => {
-    let {start = null, key = null, step = null, lt = null, gt = null, gte = null, lte = null, neq = null, eq = null, to = null} = args;
+    let {start = null, key = null, step = 1, to = null} = args;
     //起始
     if (start === null) {
         throw new Error('for 标签中 start 是必须的。');
@@ -32,9 +32,6 @@ Compile.registerCompile('for', (name, args, compile: Compile) => {
         }
     }
     //默认是1
-    if (step === null) {
-        step = 1;
-    }
     let prefix = compile.getTempPrefix('for');
     let vars = compile.getVarter(prefix);
     if (key !== null) {
