@@ -11,7 +11,7 @@ Compile.registerCompile('for', (name, args, compile: Compile) => {
     let smycodes = {lt: '<', gt: '>', gte: '>=', lte: '<=', neq: '!=', eq: '=='};
     let smval = 'null';
     for (let i in args) {
-        if (i == 'lt' || i == 'gt' || i == 'lte' || i == 'gte' || i == 'neq' || i == 'eq' || i == 'to') {
+        if (i == 'lt' || i == 'gt' || i == 'lte' || i == 'gte' || i == 'neq' || i == 'eq') {
             if (tpk) {
                 throw new Error('for 标签中循环条件重复 ' + tpk + ' 和 ' + i + ' 重复.');
             }
@@ -21,7 +21,7 @@ Compile.registerCompile('for', (name, args, compile: Compile) => {
             }
         }
     }
-    if (!tpk) {
+    if (to == null && tpk == null) {
         compile.addError('Tags for loop condition is lost, lt (less than) gt (greater than) lte (less than or equal) gte (greater than or equal) neq (not equal) eq (equal) and must require a');
     }
     //key只能是变量
@@ -44,8 +44,13 @@ Compile.registerCompile('for', (name, args, compile: Compile) => {
     compile.addVar(vars);
     let output = [];
     let expcode = '';
-    if (tpk == 'to') {
-        expcode = `(${start}<=${smval})?(${ekey}<=${smval}):(${ekey}>=${smval});`;
+    if (to != null) {
+        expcode = `(${start}<=${smval})?(${ekey}<=${smval}):(${ekey}>=${smval})`;
+        if (tpk) {
+            expcode += ' && ' + `${ekey} ${smycodes[tpk]} ${smval};`;
+        } else {
+            expcode += ';';
+        }
         expcode += `${ekey}+=(${start}<=${smval}?${step}:-${step})`;
     } else {
         expcode = `${ekey} ${smycodes[tpk]} ${smval};`;
