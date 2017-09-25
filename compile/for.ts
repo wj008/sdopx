@@ -47,7 +47,7 @@ Compile.registerCompile('for', (name, args, compile: Compile) => {
     if (to != null) {
         expcode = `(${start}<=${smval})?(${ekey}<=${smval}):(${ekey}>=${smval})`;
         if (tpk) {
-            expcode += ' && ' + `${ekey} ${smycodes[tpk]} ${smval};`;
+            expcode += ' && ' + `(${ekey} ${smycodes[tpk]} ${smval});`;
         } else {
             expcode += ';';
         }
