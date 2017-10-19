@@ -197,15 +197,12 @@ Sdopx.registerModifier('option', function (str, opts, def = '') {
 
 //########################################################################################
 //## 函数使用
-Sdopx.registerFunction('hello', function (str) {
-    return 'hello ' + str;
-});
 
 
 //## 插件使用
 Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
     let cycle_vars = sdopx._temp_cycle_vars = sdopx._temp_cycle_vars || {};
-    let {name = 'default', print = true, advance = true, reset = false, values = null, delimiter = ',', assign = null}=params;
+    let {name = 'default', print = true, advance = true, reset = false, values = null, delimiter = ',', assign = null} = params;
     let item = cycle_vars[name] || null;
     if (values === null && item === null) {
         sdopx.addError(`cycle: missing 'values' parameter`);
@@ -255,7 +252,7 @@ Sdopx.registerPlugin('cycle', function (params, out, sdopx) {
 });
 //## 注册插件块
 Sdopx.registerPlugin('list', function (params, out, func, sdopx) {
-    let {data = []}=params;
+    let {data = []} = params;
     out.raw('<table>');
     for (var i = 0; i < data.length; i++) {
         func(data[i]);

@@ -168,7 +168,7 @@ export class Template {
             let out = [];
             out.push('var __Sdopx=$_sdopx._Sdopx;');
             if (Sdopx.debug) {
-                out.push('var __line=0,__src=\'' + this.source.tplname + '\';');
+                out.push('var __line=0,__src=' + JSON.stringify(this.source.tplname) + ';');
                 out.push('try{');
             }
             out.push(code);
