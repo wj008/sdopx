@@ -16,11 +16,16 @@ export class Sdopx extends Template {
         let {version} = JSON.parse(fs.readFileSync(__dirname + `/package.json`, 'utf-8'));
         return version;
     })();
+
     public static debug = false;
     public static extension = 'opx';
     public static create_runfile = false;
     public static left_delimiter = '{';
     public static right_delimiter = '}';
+    //强制编译
+    public static force_compile = false;
+    //检查编译
+    public static compile_check = true;
 
     public context = null;
 
@@ -62,6 +67,8 @@ export class Sdopx extends Template {
         super();
         this.left_delimiter = Sdopx.left_delimiter || '{';
         this.right_delimiter = Sdopx.right_delimiter || '}';
+        this.force_compile = Sdopx.force_compile;
+        this.compile_check = Sdopx.compile_check;
         let _sdopx = this._book['sdopx'] = {};
         _sdopx['config'] = this._config;
         _sdopx['ldelim'] = this.left_delimiter;
@@ -103,7 +110,7 @@ export class Sdopx extends Template {
     }
 
     public display(tplname) {
-        if (this.context) {
+        if (this.context && typeof(this.context.write) == 'function' && typeof(this.context.end) == 'function') {
             this.context.write(this.fetch(tplname));
             this.context.end();
             return;
@@ -192,12 +199,12 @@ export class Sdopx extends Template {
     }
 
     //注册资源类型
-    public static registerResource(type, sourceObj) {
+    public static registerResource(type: string, sourceObj) {
         Resource.registerResource(type, sourceObj);
     }
 
     //注册过滤器
-    public static registerFilter(type, filter) {
+    public static registerFilter(type: string, filter: Function) {
         if (!Sdopx.Filters[type]) {
             Sdopx.Filters[type] = [];
         }
@@ -205,7 +212,7 @@ export class Sdopx extends Template {
     }
 
     //注册函数
-    public static registerFunction(name, func) {
+    public static registerFunction(name: string, func: Function) {
         if (typeof(name) !== 'string' || typeof(func) !== 'function') {
             return;
         }
@@ -213,7 +220,7 @@ export class Sdopx extends Template {
     }
 
     //注册修饰器
-    public static registerModifier(name, func) {
+    public static registerModifier(name: string, func: Function) {
         if (typeof(name) !== 'string' || typeof(func) !== 'function') {
             return;
         }
@@ -221,7 +228,7 @@ export class Sdopx extends Template {
     }
 
     //注册修饰器
-    public static registerCompileModifier(name, func) {
+    public static registerCompileModifier(name: string, func: Function) {
         if (typeof(name) !== 'string' || typeof(func) !== 'function') {
             return;
         }
@@ -229,7 +236,7 @@ export class Sdopx extends Template {
     }
 
     //注册插件
-    public static registerPlugin(name, func, type = 1) {
+    public static registerPlugin(name: string, func: any, type = 1) {
         if (typeof(name) !== 'string' || typeof(func) !== 'function') {
             return;
         }
