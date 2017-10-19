@@ -48,7 +48,7 @@ Compile.registerCompile('__customize', (name, args, compile: Compile) => {
 });
 
 Compile.registerCompile('__customize_close', (tagname, compile) => {
-    let [,data]=compile.closeTag([tagname]);
+    let [, data] = compile.closeTag([tagname]);
     return `},$_sdopx);`;
 });
 

@@ -1,4 +1,4 @@
-let fs = require('fs');
+const fs = require('fs');
 let files = fs.readdirSync(__dirname);
 if (files) {
     files.forEach(function (path) {
